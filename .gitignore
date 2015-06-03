@@ -10,6 +10,20 @@
 *.dll
 *.dylib
 
+# CMake
+
+CMakeCache.txt
+CMakeFiles
+CTestTestfile.cmake
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+
+# project executables
+reversi
+reversi_tests
+
 # Qt-es
 
 /.qmake.cache
