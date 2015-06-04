@@ -1,6 +1,5 @@
 // Copyright 2015 Tammo Behrends
 
-#include "./direction.h"
 #include "./reversi_game.h"
 
 int main() {
@@ -9,10 +8,13 @@ int main() {
     ReversiGame game;
     game.displayBoard();
 
-    Square start{2, 5};
-    Square end{0, 7};
-
-    std::cout << determine(start, end) << std::endl;
+    for (auto m : game.get_moves()) {
+        std::cout << "(" << m.first.x << "|" << m.first.y << ") -> ";
+        for (auto s : m.second) {
+            std::cout << "(" << s.x << "|" << s.y << ")";
+        }
+        std::cout << std::endl;
+    }
 
     return 0;
 }

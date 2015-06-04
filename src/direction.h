@@ -3,27 +3,23 @@
 #ifndef REVERSI_DIRECTION_H
 #define REVERSI_DIRECTION_H
 
-#include "./utils.h"
-#include "./square.h"
 
 #include <array>
+#include <string>
 #include <iostream>
+
+#include "./utils.h"
+#include "./square.h"
 
 enum class Direction { up, up_left, up_right, down, down_right, down_left, left, right };
 
 inline std::ostream &operator<<(std::ostream &os, const Direction &d) {
-    static std::array<std::string, 8> directionStrings {
-            "UP",
-            "UPLEFT",
-            "UPRIGHT",
-            "DOWN",
-            "DOWNRIGHT",
-            "DOWNLEFT",
-            "LEFT",
-            "RIGHT"
+    static std::array<std::string, 8> direction_strings{
+            "UP", "UPLEFT", "UPRIGHT",
+            "DOWN", "DOWNRIGHT", "DOWNLEFT",
+            "LEFT", "RIGHT"
     };
-
-    return os << directionStrings[as_integer(d)];
+    return os << direction_strings[as_integer(d)];
 }
 
 inline Direction determine(const Square start, const Square end) {
@@ -41,4 +37,5 @@ inline Direction determine(const Square start, const Square end) {
     }
 }
 
-#endif //REVERSI_DIRECTION_H
+
+#endif  // REVERSI_DIRECTION_H
