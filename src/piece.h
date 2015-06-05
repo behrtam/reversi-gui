@@ -10,10 +10,13 @@
 
 #include "./utils.h"
 
-enum class Piece { empty, black, white };
 
-inline std::ostream& operator << (std::ostream& os, const Piece & p) {
-    static std::array<std::string, 3> piece_strings { "_", "X", "O" };
+enum class Piece {
+    empty, black, white
+};
+
+inline std::ostream &operator<<(std::ostream &os, const Piece &p) {
+    static std::array<std::string, 3> piece_strings{"_", "X", "O"};
     return os << piece_strings[as_integer(p)];
 }
 

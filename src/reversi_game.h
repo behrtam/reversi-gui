@@ -11,6 +11,7 @@
 #include "./piece.h"
 #include "./square.h"
 
+
 class ReversiGame {
  private:
     const int size_;
@@ -20,7 +21,8 @@ class ReversiGame {
     Piece active_;
 
  public:
-    ReversiGame() : ReversiGame(8) {}
+    ReversiGame() : ReversiGame(8) { }
+
     explicit ReversiGame(int size) : board_(size * size), size_(size) {
         // throw error if size < 4, size > 16, size % 2 == 1
         set_piece(size_ / 2, size_ / 2, Piece::white);
@@ -33,16 +35,31 @@ class ReversiGame {
     }
 
     void displayBoard() const;
+
     Piece get_piece(Square s) const;
+
     auto get_moves() const { return possible_moves_; }
+
+    bool is_valid_move(Square s) const;
+
+    void make_move(Square s);
+
+    bool moves_possible() const { return !possible_moves_.empty(); }
+
+    Piece is_active() const { return active_; }
 
  private:
     Piece get_piece(int x, int y) const;
+
     void set_piece(int x, int y, Piece p);
+
     void set_piece(Square s, Piece p);
 
     void set_all_moves();
+
     void set_moves(Square s);
+
+    void flip_pieces(Square start, Square end);
 };
 
 
