@@ -7,7 +7,7 @@
 #include "./utils.h"
 
 
-void ReversiGame::displayBoard() const {
+void ReversiGame::display_board() const {
     for (int y = size_ - 1; y >= 0; --y) {
         std::cout << y;
         for (int x = 0; x < size_; ++x) {
@@ -146,12 +146,12 @@ void ReversiGame::set_moves(Square s) {
 }
 
 void ReversiGame::make_move(Square s) {
-    auto result = std::find_if(std::begin(possible_moves_), std::end(possible_moves_),
+    auto moves = std::find_if(std::begin(possible_moves_), std::end(possible_moves_),
                                [&s](const auto &item) { return item.first == s; });
-    if (result != std::end(possible_moves_)) {
+    if (moves != std::end(possible_moves_)) {
         set_piece(s, active_);
-        for (auto end : (*result).second) {
-            flip_pieces((*result).first, end);
+        for (auto end : (*moves).second) {
+            flip_pieces((*moves).first, end);
         }
         active_ = invert(active_);
         set_all_moves();

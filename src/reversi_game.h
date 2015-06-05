@@ -14,10 +14,9 @@
 
 class ReversiGame {
  private:
-    const int size_;
+    const unsigned int size_;
     std::vector<Piece> board_;
     std::vector<std::pair<Square, std::vector<Square>>> possible_moves_;
-
     Piece active_;
 
  public:
@@ -34,7 +33,11 @@ class ReversiGame {
         set_all_moves();
     }
 
-    void displayBoard() const;
+    void display_board() const;
+
+    unsigned int board_size() const {
+        return size_;
+    }
 
     Piece get_piece(Square s) const;
 

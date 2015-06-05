@@ -7,7 +7,7 @@ int main() {
     std::cout << "Hello, Reversi!" << std::endl;
 
     ReversiGame game;
-    game.displayBoard();
+    game.display_board();
 
     while (game.moves_possible()) {
         for (auto m : game.get_moves()) {
@@ -21,7 +21,7 @@ int main() {
         std::cout << "turn: " << game.is_active() << std::endl;
         std::cin >> x >> y;
         game.make_move({x, y});
-        game.displayBoard();
+        game.display_board();
     }
 
     return 0;
