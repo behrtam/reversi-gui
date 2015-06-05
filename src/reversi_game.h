@@ -22,16 +22,7 @@ class ReversiGame {
  public:
     ReversiGame() : ReversiGame(8) { }
 
-    explicit ReversiGame(int size) : board_(size * size), size_(size) {
-        // throw error if size < 4, size > 16, size % 2 == 1
-        set_piece(size_ / 2, size_ / 2, Piece::white);
-        set_piece(size_ / 2 - 1, size_ / 2, Piece::black);
-        set_piece(size_ / 2, size_ / 2 - 1, Piece::white);
-        set_piece(size_ / 2 - 1, size_ / 2 - 1, Piece::black);
-
-        active_ = Piece::white;
-        set_all_moves();
-    }
+    explicit ReversiGame(int size);
 
     void display_board() const;
 

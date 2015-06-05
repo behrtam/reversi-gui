@@ -29,11 +29,7 @@ inline Piece invert(const Piece p) {
 }
 
 inline Piece operator!(Piece p) {
-    if (p == Piece::black)
-        return Piece::white;
-    if (p == Piece::white)
-        return Piece::black;
-    return Piece::empty;
+    return invert(p);
 }
 
 #endif  // REVERSI_PIECE_H

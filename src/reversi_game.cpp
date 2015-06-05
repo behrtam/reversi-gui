@@ -6,6 +6,16 @@
 #include "./reversi_game.h"
 #include "./utils.h"
 
+ReversiGame::ReversiGame(int size) : board_(size * size), size_(size) {
+    // throw error if size < 4, size > 16, size % 2 == 1
+    set_piece(size_ / 2, size_ / 2, Piece::white);
+    set_piece(size_ / 2 - 1, size_ / 2, Piece::black);
+    set_piece(size_ / 2, size_ / 2 - 1, Piece::black);
+    set_piece(size_ / 2 - 1, size_ / 2 - 1, Piece::white);
+
+    active_ = Piece::white;
+    set_all_moves();
+}
 
 void ReversiGame::display_board() const {
     for (int y = size_ - 1; y >= 0; --y) {

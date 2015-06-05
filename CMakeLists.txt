@@ -9,7 +9,7 @@ add_executable(reversi ${SOURCE_FILES} ${HEADER_FILES})
 
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
-add_executable(reversi_tests test/direction_test.cpp ${HEADER_FILES})
+add_executable(reversi_tests test/direction_test.cpp test/reversi_test.cpp src/reversi_game.cpp)
 target_link_libraries(reversi_tests gtest gtest_main)
 enable_testing()
 add_test(reversitest reversi_tests)
