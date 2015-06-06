@@ -66,3 +66,17 @@ TEST_F(ReversiGameTest, ValidMove) {
 TEST_F(ReversiGameTest, ValidMoveNegative) {
     ASSERT_FALSE(default_game.is_valid_move({0, 0}));
 }
+
+TEST_F(ReversiGameTest, ScoreAtStart) {
+    auto score = default_game.get_score();
+    EXPECT_EQ(2, score.first);
+    EXPECT_EQ(2, score.second);
+}
+
+TEST_F(ReversiGameTest, Score) {
+    ReversiGame game;
+    game.make_move(game.get_moves()[0].first);
+    auto score = game.get_score();
+    EXPECT_EQ(4, score.first);
+    EXPECT_EQ(1, score.second);
+}

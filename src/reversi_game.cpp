@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <iostream>
+#include <utility>
 
 #include "./reversi_game.h"
 #include "./utils.h"
@@ -183,4 +184,15 @@ void ReversiGame::flip_pieces(Square start, Square end) {
         else if (start.y < end.y) start.y++;
         set_piece(start, active_);
     }
+}
+
+std::pair<unsigned int, unsigned int> ReversiGame::get_score() const {
+    std::pair<unsigned int, unsigned int> score{0, 0};
+    for (Piece p : board_) {
+        if (p == Piece::white)
+            ++score.first;
+        else if (p == Piece::black)
+            ++score.second;
+    }
+    return score;
 }

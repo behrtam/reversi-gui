@@ -30,6 +30,8 @@ class ReversiGame {
         return size_;
     }
 
+    std::pair<unsigned int, unsigned int> get_score() const;
+
     Piece get_piece(Square s) const;
 
     auto get_moves() const { return possible_moves_; }
