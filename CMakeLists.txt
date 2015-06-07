@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.2)
 project(reversi)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(SOURCE_FILES src/main.cpp src/reversi_game.cpp)
 set(HEADER_FILES src/direction.h src/piece.h src/reversi_game.h src/square.h src/utils.h)
 add_executable(reversi ${SOURCE_FILES} ${HEADER_FILES})

@@ -7,7 +7,7 @@
 // typedef std::pair<int, int> Square;
 
 typedef struct Square {
-    int x, y;
+    unsigned int x, y;
 } Square;
 
 inline bool operator==(const Square &lhs, const Square &rhs) {

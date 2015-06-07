@@ -17,7 +17,7 @@ int main() {
             }
             std::cout << std::endl;
         }
-        int x, y;
+        unsigned int x, y;
         std::cout << "turn: " << game.is_active() << std::endl;
         std::cin >> x >> y;
         game.make_move({x, y});

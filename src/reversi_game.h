@@ -22,7 +22,7 @@ class ReversiGame {
  public:
     ReversiGame() : ReversiGame(8) { }
 
-    explicit ReversiGame(int size);
+    explicit ReversiGame(unsigned int size);
 
     void display_board() const;
 
@@ -45,9 +45,9 @@ class ReversiGame {
     Piece is_active() const { return active_; }
 
  private:
-    Piece get_piece(int x, int y) const;
+    Piece get_piece(unsigned int x, unsigned int y) const;
 
-    void set_piece(int x, int y, Piece p);
+    void set_piece(unsigned int x, unsigned int y, Piece p);
 
     void set_piece(Square s, Piece p);
 

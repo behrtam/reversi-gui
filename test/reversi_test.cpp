@@ -4,6 +4,8 @@
 
 #include <gtest/gtest.h>
 
+#include <stdexcept>
+
 class ReversiGameTest : public testing::Test {
  protected:
     const ReversiGame default_game;
@@ -11,24 +13,30 @@ class ReversiGameTest : public testing::Test {
 
 
 TEST_F(ReversiGameTest, DefaultConstructor) {
-    ASSERT_EQ(Piece::empty, default_game.get_piece({0, 0}));
-    ASSERT_EQ(Piece::empty, default_game.get_piece({7, 7}));
-    ASSERT_EQ(Piece::black, default_game.get_piece({3, 4}));
-    ASSERT_EQ(Piece::black, default_game.get_piece({4, 3}));
-    ASSERT_EQ(Piece::white, default_game.get_piece({4, 4}));
-    ASSERT_EQ(Piece::white, default_game.get_piece({3, 3}));
     ASSERT_EQ(8, default_game.board_size());
+    EXPECT_EQ(Piece::empty, default_game.get_piece({0, 0}));
+    EXPECT_EQ(Piece::empty, default_game.get_piece({7, 7}));
+    EXPECT_EQ(Piece::black, default_game.get_piece({3, 4}));
+    EXPECT_EQ(Piece::black, default_game.get_piece({4, 3}));
+    EXPECT_EQ(Piece::white, default_game.get_piece({4, 4}));
+    EXPECT_EQ(Piece::white, default_game.get_piece({3, 3}));
+
 }
 
 TEST_F(ReversiGameTest, Constructor) {
     ReversiGame game{16};
-    ASSERT_EQ(Piece::empty, game.get_piece({0, 0}));
-    ASSERT_EQ(Piece::empty, game.get_piece({15, 15}));
-    ASSERT_EQ(Piece::black, game.get_piece({7, 8}));
-    ASSERT_EQ(Piece::black, game.get_piece({8, 7}));
-    ASSERT_EQ(Piece::white, game.get_piece({8, 8}));
-    ASSERT_EQ(Piece::white, game.get_piece({7, 7}));
     ASSERT_EQ(16, game.board_size());
+    EXPECT_EQ(Piece::empty, game.get_piece({0, 0}));
+    EXPECT_EQ(Piece::empty, game.get_piece({15, 15}));
+    EXPECT_EQ(Piece::black, game.get_piece({7, 8}));
+    EXPECT_EQ(Piece::black, game.get_piece({8, 7}));
+    EXPECT_EQ(Piece::white, game.get_piece({8, 8}));
+    EXPECT_EQ(Piece::white, game.get_piece({7, 7}));
+
+}
+
+TEST_F(ReversiGameTest, ConstructorFail) {
+    ASSERT_THROW(ReversiGame(15), std::out_of_range);
 }
 
 TEST_F(ReversiGameTest, PossibleMovesAtStart) {
@@ -37,10 +45,10 @@ TEST_F(ReversiGameTest, PossibleMovesAtStart) {
 
     // ToDo: would be better to check contains instead of exact position
     // ToDo: only start point is checked, not the end point
-    ASSERT_EQ((Square{2, 4}), (moves[0].first));
-    ASSERT_EQ((Square{3, 5}), (moves[1].first));
-    ASSERT_EQ((Square{4, 2}), (moves[2].first));
-    ASSERT_EQ((Square{5, 3}), (moves[3].first));
+    EXPECT_EQ((Square{2, 4}), (moves[0].first));
+    EXPECT_EQ((Square{3, 5}), (moves[1].first));
+    EXPECT_EQ((Square{4, 2}), (moves[2].first));
+    EXPECT_EQ((Square{5, 3}), (moves[3].first));
 }
 
 TEST_F(ReversiGameTest, ActivePlayerAtStart) {
@@ -79,4 +87,10 @@ TEST_F(ReversiGameTest, Score) {
     auto score = game.get_score();
     EXPECT_EQ(4, score.first);
     EXPECT_EQ(1, score.second);
+}
+
+TEST_F(ReversiGameTest, GetPieceOutOfRange) {
+    //EXPECT_THROW(default_game.get_piece(Square{-1, 0}), std::out_of_range);
+    EXPECT_THROW(default_game.get_piece(Square{0, default_game.board_size()}), std::out_of_range);
+    EXPECT_THROW(default_game.get_piece(Square{default_game.board_size(), 0}), std::out_of_range);
 }
