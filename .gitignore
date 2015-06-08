@@ -33,6 +33,7 @@ reversi_tests
 *.qbs.user
 *.qbs.user.*
 *.moc
+*_automoc.cpp
 moc_*.cpp
 qrc_*.cpp
 ui_*.h

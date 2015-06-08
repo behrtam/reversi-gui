@@ -1,28 +1,18 @@
 // Copyright 2015 Tammo Behrends
 
+#include <QApplication>
+#include <QMainWindow>
+
 #include "./reversi_game.h"
+#include "./mainwindow.h"
+
+ReversiGame game;
 
 
-int main() {
-    std::cout << "Hello, Reversi!" << std::endl;
-
-    ReversiGame game;
-    game.display_board();
-
-    while (game.moves_possible()) {
-        for (auto m : game.get_moves()) {
-            std::cout << "(" << m.first.x << "|" << m.first.y << ") -> ";
-            for (auto s : m.second) {
-                std::cout << "(" << s.x << "|" << s.y << ")";
-            }
-            std::cout << std::endl;
-        }
-        unsigned int x, y;
-        std::cout << "turn: " << game.is_active() << std::endl;
-        std::cin >> x >> y;
-        game.make_move({x, y});
-        game.display_board();
-    }
-
-    return 0;
+int main(int argc, char **argv) {
+    QApplication app(argc, argv);
+    MainWindow mainWin;
+    mainWin.resize(800, 600);
+    mainWin.show();
+    return app.exec();
 }
