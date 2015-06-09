@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 2.8)
 project(reversi)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -14,13 +14,15 @@ add_executable(reversi ${SOURCE_FILES} ${HEADER_FILES})
 target_link_libraries(reversi Qt5::Widgets)
 
 # gtest stuff
+set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
+find_package(Threads REQUIRED)
+set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-pthread")
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 add_executable(reversi_tests test/direction_test.cpp test/reversi_test.cpp src/reversi_game.cpp)
-target_link_libraries(reversi_tests gtest gtest_main)
+target_link_libraries(reversi_tests gtest gtest_main ${CMAKE_THREAD_LIBS_INIT})
 enable_testing()
 add_test(reversitest reversi_tests)
-
 
 # linting stuff
 find_package(PythonInterp)
