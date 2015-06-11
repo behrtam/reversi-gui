@@ -14,10 +14,10 @@ ReversiGame::ReversiGame(unsigned int size) : size_(size), board_(size * size) {
     if (size < 4 || size > 16 || size % 2 == 1)
         throw std::out_of_range{"ReversiGame(int)"};
 
-            set_piece(size_ / 2, size_ / 2, Piece::white);
-    set_piece(size_ / 2 - 1, size_ / 2, Piece::black);
-    set_piece(size_ / 2, size_ / 2 - 1, Piece::black);
-    set_piece(size_ / 2 - 1, size_ / 2 - 1, Piece::white);
+    set_piece(size_ / 2, size_ / 2, Piece::black);
+    set_piece(size_ / 2 - 1, size_ / 2 - 1, Piece::black);
+    set_piece(size_ / 2 - 1, size_ / 2, Piece::white);
+    set_piece(size_ / 2, size_ / 2 - 1, Piece::white);
 
     active_ = Piece::white;
     set_all_moves();
@@ -53,7 +53,7 @@ void ReversiGame::set_piece(Square s, Piece p) {
 }
 
 void ReversiGame::set_piece(unsigned int x, unsigned int y, Piece p) {
-    if (x < 0 || y < 0 || x >= size_ || y >= size_)
+    if (x >= size_ || y >= size_)
         throw std::out_of_range{"set_piece(int, int, Piece)"};
     board_[x + y * size_] = p;
 }
@@ -71,7 +71,7 @@ void ReversiGame::set_all_moves() {
 
 void ReversiGame::set_moves(Square s) {
     std::vector<Square> destinations;
-
+    
     // up check
     if ((s.y < (size_ - 2)) && get_piece(s.x, s.y + 1) == invert(active_)) {
         for (unsigned int i = s.y + 2; i < size_; ++i) {
@@ -85,7 +85,7 @@ void ReversiGame::set_moves(Square s) {
 
     // down check
     if ((s.y > 1) && get_piece(s.x, s.y - 1) == invert(active_)) {
-        for (unsigned int i = s.y - 2; i >= 0; --i) {
+        for (unsigned int i = s.y - 1; i-- > 0; ) {
             if (get_piece(s.x, i) == Piece::empty) break;
             if (get_piece(s.x, i) == active_) {
                 destinations.push_back({s.x, i});
@@ -107,7 +107,7 @@ void ReversiGame::set_moves(Square s) {
 
     // left check
     if ((s.x > 1) && get_piece(s.x - 1, s.y) == invert(active_)) {
-        for (unsigned int i = s.x - 2; i >= 0; --i) {
+        for (unsigned int i = s.x - 1; i-- > 0; ) {
             if (get_piece(i, s.y) == Piece::empty) break;
             if (get_piece(i, s.y) == active_) {
                 destinations.push_back({i, s.y});
@@ -119,10 +119,10 @@ void ReversiGame::set_moves(Square s) {
     // up-right check
     if ((s.y < (size_ - 2)) && (s.x < (size_ - 2))
         && get_piece(s.x + 1, s.y + 1) == invert(active_)) {
-        for (unsigned int i = 0; (s.x + i + 2 < (size_ - 2)) && (s.y + i + 2 < (size_ - 2)); i++) {
-            if (get_piece(s.x + i + 2, s.y + i + 2) == Piece::empty) break;
-            if (get_piece(s.x + i + 2, s.y + i + 2) == active_) {
-                destinations.push_back({s.x + i + 2, s.y + i + 2});
+        for (unsigned int i = 2; ((s.x + i) < (size_ - 2)) && ((s.y + i) < (size_ - 2)); i++) {
+            if (get_piece(s.x + i, s.y + i) == Piece::empty) break;
+            if (get_piece(s.x + i, s.y + i) == active_) {
+                destinations.push_back({s.x + i, s.y + i});
                 break;
             }
         }
@@ -130,10 +130,10 @@ void ReversiGame::set_moves(Square s) {
 
     // down-right check
     if ((s.y > 1) && (s.x < (size_ - 2)) && get_piece(s.x + 1, s.y - 1) == invert(active_)) {
-        for (unsigned int i = 0; (s.x + i + 2 < (size_ - 2)) && (s.y + i + 2 >= 0); i++) {
-            if (get_piece(s.x + i + 2, s.y - i - 2) == Piece::empty) break;
-            if (get_piece(s.x + i + 2, s.y - i - 2) == active_) {
-                destinations.push_back({s.x + i + 2, s.y - i - 2});
+        for (unsigned int i = 2; (s.x + i < (size_ - 2)) && ((s.y - i + 1) > 0); i++) {
+            if (get_piece(s.x + i, s.y - i) == Piece::empty) break;
+            if (get_piece(s.x + i, s.y - i) == active_) {
+                destinations.push_back({s.x + i, s.y - i});
                 break;
             }
         }
@@ -141,10 +141,10 @@ void ReversiGame::set_moves(Square s) {
 
     // down-left check
     if ((s.y > 1) && (s.x > 1) && get_piece(s.x - 1, s.y - 1) == invert(active_)) {
-        for (unsigned int i = 0; (s.x + i + 2 >= 0) && (s.y + i + 2 >= 0); i++) {
-            if (get_piece(s.x - i - 2, s.y - i - 2) == Piece::empty) break;
-            if (get_piece(s.x - i - 2, s.y - i - 2) == active_) {
-                destinations.push_back({s.x - i - 2, s.y - i - 2});
+        for (unsigned int i = 2; ((s.x - i + 1) > 0) && ((s.y - i + 1) > 0); i++) {
+            if (get_piece(s.x - i, s.y - i) == Piece::empty) break;
+            if (get_piece(s.x - i, s.y - i) == active_) {
+                destinations.push_back({s.x - i, s.y - i});
                 break;
             }
         }
@@ -152,10 +152,10 @@ void ReversiGame::set_moves(Square s) {
 
     // up-left check
     if ((s.y < (size_ - 2)) && (s.x > 1) && get_piece(s.x - 1, s.y + 1) == invert(active_)) {
-        for (unsigned int i = 0; (s.x - i - 2 >= 0) && (s.y + i + 2 < (size_ - 2)); i++) {
-            if (get_piece(s.x - i - 2, s.y + i + 2) == Piece::empty) break;
-            if (get_piece(s.x - i - 2, s.y + i + 2) == active_) {
-                destinations.push_back({s.x - i - 2, s.y + i + 2});
+        for (unsigned int i = 2; ((s.x - i + 1) > 0) && ((s.y + i) < (size_ - 2)); i++) {
+            if (get_piece(s.x - i, s.y + i) == Piece::empty) break;
+            if (get_piece(s.x - i, s.y + i) == active_) {
+                destinations.push_back({s.x - i, s.y + i});
                 break;
             }
         }
