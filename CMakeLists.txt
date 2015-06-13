@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.2)
 project(reversi)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -8,9 +8,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++14")
 
 find_package(Qt5Widgets)
 
+set(RESOURCE ${CMAKE_SOURCE_DIR}/images/images.qrc)
+qt5_add_resources(RESOURCE_ADDED ${RESOURCE})
+
 set(SOURCE_FILES src/main.cpp src/mainwindow.cpp src/reversi_game.cpp)
 set(HEADER_FILES src/direction.h src/piece.h src/reversi_game.h src/square.h src/utils.h)
-add_executable(reversi ${SOURCE_FILES} ${HEADER_FILES})
+add_executable(reversi ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCE_ADDED})
 target_link_libraries(reversi Qt5::Widgets)
 
 # gtest stuff
@@ -23,6 +26,7 @@ add_executable(reversi_tests test/direction_test.cpp test/reversi_test.cpp src/r
 target_link_libraries(reversi_tests gtest gtest_main ${CMAKE_THREAD_LIBS_INIT})
 enable_testing()
 add_test(reversitest reversi_tests)
+
 
 # linting stuff
 find_package(PythonInterp)

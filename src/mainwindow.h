@@ -5,12 +5,13 @@
 
 
 #include <QMainWindow>
-#include <QTextEdit>
+#include <QWidget>
+
 
 class MainWindow : public QMainWindow {
  Q_OBJECT
 
-    QTextEdit *center;
+    QWidget* center;
 
 public:
     MainWindow(QWidget *parent = 0, Qt::WindowFlags flags = 0);
