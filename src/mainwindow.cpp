@@ -1,35 +1,50 @@
 // Copyright 2015 Tammo Behrends
 
-#include "./mainwindow.h"
-
 #include <QWidget>
 #include <QStatusBar>
-#include <QHBoxLayout>
+#include <QGridLayout>
 #include <QLabel>
 
-MainWindow::MainWindow(QWidget *parent, Qt::WindowFlags flags) : QMainWindow(parent, flags) {
+#include "./mainwindow.h"
+#include "./reversi_game.h"
+
+
+MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
+        : QMainWindow(parent, flags), game(new ReversiGame(4)) {
     setObjectName("MainWindow");
     setWindowTitle("Reversi Main Window");
+    setBaseSize(42, 42);
 
-    QPixmap pixmap_black;
-    if (!pixmap_black.load(":/resources/black.png" ))
+    pixmap_black = new QPixmap();
+    if (!pixmap_black->load(":/resources/black.png" ))
         qWarning("Failed to load black.png");
-    QLabel* label_black = new QLabel(this);
-    label_black->setPixmap(pixmap_black);
 
-    QPixmap pixmap_white;
-    if (!pixmap_white.load(":/resources/white.png" ))
+    pixmap_white = new QPixmap();
+    if (!pixmap_white->load(":/resources/white.png" ))
         qWarning("Failed to load white.png");
-    QLabel* label_white = new QLabel(this);
-    label_white->setPixmap(pixmap_white);
 
-    QHBoxLayout* layout = new QHBoxLayout();
-    layout->addWidget(label_black);
-    layout->addWidget(label_white);
-
-    center = new QWidget(this);
-    center->setLayout(layout);
-    setCentralWidget(center);
+    createGameGrid();
 
     statusBar()->showMessage(tr("Status Bar"));
+}
+
+void MainWindow::createGameGrid() {
+    QGridLayout *grid_layout = new QGridLayout;
+    grid_layout->setSpacing(0);
+    grid_layout->setMargin(0);
+
+    for (int i = 0; i < game->board_size(); i++) {
+        for (int j = 0; j < game->board_size(); j++) {
+            QLabel* label = new QLabel(this);
+            label->setFrameStyle(QFrame::Panel + QFrame::Sunken);
+            label->setAlignment(Qt::AlignCenter);
+            label->setPixmap((i + j) % 2 ? *pixmap_black : *pixmap_white);
+            label->setScaledContents(true);
+            grid_layout->addWidget(label, i, j);
+        }
+    }
+
+    center = new QWidget(this);  // dummy wrapper widget
+    center->setLayout(grid_layout);
+    setCentralWidget(center);
 }
