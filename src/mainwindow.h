@@ -4,14 +4,15 @@
 #define QTHALLOWORLD_MAINWINDOW_H
 
 
-#include "./reversi_game.h"
-
 #include <QMainWindow>
 #include <QWidget>
 
+#include "./reversi_game.h"
+#include "./clickablelabel.h"
+
 
 class MainWindow : public QMainWindow {
- Q_OBJECT
+    Q_OBJECT
 
  private:
     QWidget* center;
@@ -20,10 +21,11 @@ class MainWindow : public QMainWindow {
     QPixmap* pixmap_white;
 
  public:
-    MainWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0);
+    explicit MainWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0);
 
  private:
     void createGameGrid();
+    void clickedGamePiece(int x, int y, ClickableLabel* label);
 };
 
 

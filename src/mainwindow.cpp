@@ -6,6 +6,7 @@
 #include <QLabel>
 
 #include "./mainwindow.h"
+#include "./clickablelabel.h"
 #include "./reversi_game.h"
 
 
@@ -35,11 +36,14 @@ void MainWindow::createGameGrid() {
 
     for (int i = 0; i < game->board_size(); i++) {
         for (int j = 0; j < game->board_size(); j++) {
-            QLabel* label = new QLabel(this);
+            ClickableLabel* label = new ClickableLabel(this);
             label->setFrameStyle(QFrame::Panel + QFrame::Sunken);
             label->setAlignment(Qt::AlignCenter);
             label->setPixmap((i + j) % 2 ? *pixmap_black : *pixmap_white);
             label->setScaledContents(true);
+
+            connect(label, &ClickableLabel::clicked,
+                    [this, i, j, label]{ clickedGamePiece(i, j, label); });
             grid_layout->addWidget(label, i, j);
         }
     }
@@ -47,4 +51,16 @@ void MainWindow::createGameGrid() {
     center = new QWidget(this);  // dummy wrapper widget
     center->setLayout(grid_layout);
     setCentralWidget(center);
+}
+
+void MainWindow::clickedGamePiece(int x, int y, ClickableLabel* label) {
+    std::cout << "clicked: " << x << "|" << y << std::endl;
+
+    QPixmap pixmap_white;
+    if (!pixmap_white.load(":/resources/white.png" )) {
+        qWarning("Failed to load black.png");
+    }
+
+    label->setPixmap(pixmap_white);
+    label->setScaledContents(true);
 }
