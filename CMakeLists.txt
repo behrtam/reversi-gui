@@ -11,8 +11,8 @@ find_package(Qt5Widgets)
 set(RESOURCE ${CMAKE_SOURCE_DIR}/images/images.qrc)
 qt5_add_resources(RESOURCE_ADDED ${RESOURCE})
 
-set(SOURCE_FILES src/main.cpp src/mainwindow.cpp src/reversi_game.cpp)
-set(HEADER_FILES src/direction.h src/piece.h src/reversi_game.h src/square.h src/utils.h)
+set(SOURCE_FILES src/main.cpp src/mainwindow.cpp src/reversi_game.cpp src/clickablelabel.cpp)
+set(HEADER_FILES src/direction.h src/piece.h src/reversi_game.h src/square.h src/utils.h src/mainwindow.h src/clickablelabel.h)
 add_executable(reversi ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCE_ADDED})
 target_link_libraries(reversi Qt5::Widgets)
 
