@@ -6,6 +6,7 @@
 
 #include <QMainWindow>
 #include <QWidget>
+#include <QGridLayout>
 
 #include "./reversi_game.h"
 #include "./clickablelabel.h"
@@ -16,6 +17,7 @@ class MainWindow : public QMainWindow {
 
  private:
     QWidget* center;
+    QGridLayout* grid_layout;
     std::unique_ptr<ReversiGame> game;
     QPixmap* pixmap_black;
     QPixmap* pixmap_white;
@@ -25,7 +27,10 @@ class MainWindow : public QMainWindow {
 
  private:
     void createGameGrid();
-    void clickedGamePiece(int x, int y, ClickableLabel* label);
+
+    void clickedGamePiece(unsigned int x, unsigned int y);
+
+    void updateGameGrid();
 };
 
 
