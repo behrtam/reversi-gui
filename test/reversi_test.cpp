@@ -3,8 +3,8 @@
 #include "../src/reversi_game.h"
 
 #include <gtest/gtest.h>
-
 #include <stdexcept>
+
 
 class ReversiGameTest : public testing::Test {
  protected:
@@ -78,7 +78,7 @@ TEST_F(ReversiGameTest, LongDefaultGame) {
     ASSERT_EQ(2, moves[4].second.size());
     EXPECT_EQ((Square{2, 4}), (moves[4].second[0]));
     EXPECT_EQ((Square{5, 3}), (moves[4].second[1]));
-    
+
     EXPECT_EQ((Square{3, 2}), (moves[5].first));
     EXPECT_EQ((Square{3, 4}), (moves[5].second[0]));
     EXPECT_EQ((Square{3, 6}), (moves[6].first));
@@ -102,20 +102,20 @@ TEST_F(ReversiGameTest, LongDefaultGame) {
 TEST_F(ReversiGameTest, BlindFlightFullBoardGame) {
     ReversiGame game;
     int c = 0;
-    
+
     while (true) {
         auto moves = game.get_moves();
         if (moves.size() == 0) break;
         auto move = (++c % 2) ? moves.front().first : moves.back().first;
         game.make_move(move);
     }
-    
-    EXPECT_EQ(60, c);
+
+    EXPECT_EQ(57, c);
     EXPECT_EQ(0, game.get_moves().size());
-    EXPECT_EQ(Piece::white, game.is_active());
+    EXPECT_EQ(Piece::black, game.is_active());
 
     auto score = game.get_score();
-    EXPECT_EQ(39, score.first);
+    EXPECT_EQ(36, score.first);
     EXPECT_EQ(25, score.second);
 }
 
@@ -156,6 +156,38 @@ TEST_F(ReversiGameTest, Score) {
 
 TEST_F(ReversiGameTest, GetPieceOutOfRange) {
     //EXPECT_THROW(default_game.get_piece(Square{-1, 0}), std::out_of_range);
-    EXPECT_THROW(default_game.get_piece(Square{0, default_game.board_size()}), std::out_of_range);
-    EXPECT_THROW(default_game.get_piece(Square{default_game.board_size(), 0}), std::out_of_range);
+    EXPECT_THROW(default_game.get_piece({0, default_game.board_size()}), std::out_of_range);
+    EXPECT_THROW(default_game.get_piece({default_game.board_size(), 0}), std::out_of_range);
+}
+
+TEST_F(ReversiGameTest, CheckGetMoveUpRight) {
+    ReversiGame game(4);
+    ASSERT_TRUE(game.is_valid_move({2, 3}));
+    game.make_move({2, 3});
+    ASSERT_TRUE(game.is_valid_move({3, 3}));
+}
+
+TEST_F(ReversiGameTest, CheckGetMoveDownLeft) {
+    ReversiGame game(4);
+    ASSERT_TRUE(game.is_valid_move({1, 0}));
+    game.make_move({1, 0});
+    ASSERT_TRUE(game.is_valid_move({0, 0}));
+}
+
+TEST_F(ReversiGameTest, CheckGetMoveDownRight) {
+    ReversiGame game(4);
+    ASSERT_TRUE(game.is_valid_move({2, 3}));
+    game.make_move({2, 3});
+    ASSERT_TRUE(game.is_valid_move({3, 1}));
+    game.make_move({3, 1});
+    ASSERT_TRUE(game.is_valid_move({3, 0}));
+}
+
+TEST_F(ReversiGameTest, CheckGetMoveUpLeft) {
+    ReversiGame game(4);
+    ASSERT_TRUE(game.is_valid_move({1, 0}));
+    game.make_move({1, 0});
+    ASSERT_TRUE(game.is_valid_move({0, 2}));
+    game.make_move({0, 2});
+    ASSERT_TRUE(game.is_valid_move({0, 3}));
 }
