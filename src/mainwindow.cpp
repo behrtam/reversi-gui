@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
         : QMainWindow(parent, flags), game(new ReversiGame()) {
     setObjectName("MainWindow");
     setWindowTitle("Reversi Main Window");
-    setBaseSize(42, 42);
+    resize(700, 700);
 
     pixmap_black = new QPixmap();
     if (!pixmap_black->load(":/resources/black.png" ))
@@ -48,6 +48,7 @@ void MainWindow::createGameGrid() {
     for (int x = game->board_size(); x-- > 0; ) {
         for (int y = game->board_size(); y-- > 0; ) {
             ClickableLabel* label = new ClickableLabel(this);
+            label->setMinimumSize(50, 50);
             label->setFrameStyle(QFrame::Panel + QFrame::Sunken);
             label->setAlignment(Qt::AlignCenter);
             label->setPixmap(pixmap_empty);
@@ -88,6 +89,7 @@ void MainWindow::updateGameGrid() {
             Piece p = game->get_piece({x, game->board_size() - y - 1});
             if (p == Piece::black) label->setPixmap(*pixmap_black);
             else if (p == Piece::white) label->setPixmap(*pixmap_white);
+            label->setScaledContents(true);
         }
     }
 }
