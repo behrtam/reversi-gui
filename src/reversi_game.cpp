@@ -23,9 +23,9 @@ ReversiGame::ReversiGame(unsigned int size) : size_(size), board_(size * size) {
 }
 
 void ReversiGame::display_board() const {
-    for (int y = size_ - 1; y >= 0; --y) {
+    for (unsigned int y = size_; y-- > 0; ) {
         std::cout << y;
-        for (int x = 0; x < size_; ++x) {
+        for (unsigned int x = 0; x < size_; ++x) {
             std::cout << " " << get_piece(x, y);
         }
         std::cout << std::endl;
