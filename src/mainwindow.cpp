@@ -10,6 +10,7 @@
 #include <QString>
 
 #include <sstream>
+#include <memory>
 
 #include "./clickablelabel.h"
 #include "./reversi_game.h"
@@ -17,7 +18,7 @@
 
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
-        : QMainWindow(parent, flags), game(new ReversiGame()) {
+        : QMainWindow(parent, flags), game(std::make_unique<ReversiGame>()) {
     setObjectName("MainWindow");
     setWindowTitle("Reversi Main Window");
     resize(700, 700);
