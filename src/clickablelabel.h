@@ -19,7 +19,7 @@ class ClickableLabel : public QLabel {
     void clicked();
 
  protected:
-    void mousePressEvent (QMouseEvent* event);
+    void mousePressEvent(QMouseEvent* event);
 };
 
 
