@@ -3,6 +3,7 @@
 #ifndef QTHALLOWORLD_MAINWINDOW_H
 #define QTHALLOWORLD_MAINWINDOW_H
 
+#include <memory>
 
 #include <QMainWindow>
 #include <QWidget>
