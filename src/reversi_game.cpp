@@ -5,12 +5,11 @@
 #include <utility>
 #include <stdexcept>
 
-
 #include "./reversi_game.h"
 #include "./utils.h"
 
+
 ReversiGame::ReversiGame(unsigned int size) : size_(size), board_(size * size) {
-    // throw error if size < 4, size > 16, size % 2 == 1
     if (size < 4 || size > 16 || size % 2 == 1)
         throw std::out_of_range{"ReversiGame(int)"};
 
@@ -71,7 +70,7 @@ void ReversiGame::set_all_moves() {
 
 void ReversiGame::set_moves(Square s) {
     std::vector<Square> destinations;
-    
+
     // up check
     if ((s.y < (size_ - 2)) && get_piece(s.x, s.y + 1) == invert(active_)) {
         for (unsigned int i = s.y + 2; i < size_; ++i) {
@@ -119,7 +118,7 @@ void ReversiGame::set_moves(Square s) {
     // up-right check
     if ((s.y < (size_ - 2)) && (s.x < (size_ - 2))
         && get_piece(s.x + 1, s.y + 1) == invert(active_)) {
-        for (unsigned int i = 2; ((s.x + i) < (size_ - 2)) && ((s.y + i) < (size_ - 2)); i++) {
+        for (unsigned int i = 2; ((s.x + i) < size_) && ((s.y + i) < size_); i++) {
             if (get_piece(s.x + i, s.y + i) == Piece::empty) break;
             if (get_piece(s.x + i, s.y + i) == active_) {
                 destinations.push_back({s.x + i, s.y + i});
@@ -130,7 +129,7 @@ void ReversiGame::set_moves(Square s) {
 
     // down-right check
     if ((s.y > 1) && (s.x < (size_ - 2)) && get_piece(s.x + 1, s.y - 1) == invert(active_)) {
-        for (unsigned int i = 2; (s.x + i < (size_ - 2)) && ((s.y - i + 1) > 0); i++) {
+        for (unsigned int i = 2; (s.x + i < size_) && ((s.y - i + 1) > 0); i++) {
             if (get_piece(s.x + i, s.y - i) == Piece::empty) break;
             if (get_piece(s.x + i, s.y - i) == active_) {
                 destinations.push_back({s.x + i, s.y - i});
@@ -152,7 +151,7 @@ void ReversiGame::set_moves(Square s) {
 
     // up-left check
     if ((s.y < (size_ - 2)) && (s.x > 1) && get_piece(s.x - 1, s.y + 1) == invert(active_)) {
-        for (unsigned int i = 2; ((s.x - i + 1) > 0) && ((s.y + i) < (size_ - 2)); i++) {
+        for (unsigned int i = 2; ((s.x - i + 1) > 0) && ((s.y + i) < size_); i++) {
             if (get_piece(s.x - i, s.y + i) == Piece::empty) break;
             if (get_piece(s.x - i, s.y + i) == active_) {
                 destinations.push_back({s.x - i, s.y + i});
