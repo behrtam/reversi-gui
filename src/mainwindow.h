@@ -22,6 +22,7 @@ class MainWindow : public QMainWindow {
     std::unique_ptr<ReversiGame> game;
     QPixmap* pixmap_black;
     QPixmap* pixmap_white;
+    QPixmap* pixmap_empty;
 
  public:
     explicit MainWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0);

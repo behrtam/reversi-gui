@@ -8,6 +8,9 @@
 #include <QGridLayout>
 #include <QLabel>
 #include <QString>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QAbstractButton>
 
 #include <sstream>
 #include <memory>
@@ -15,6 +18,7 @@
 #include "./clickablelabel.h"
 #include "./reversi_game.h"
 #include "./piece.h"
+#include "./random_reversi_player.h"
 
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
@@ -31,6 +35,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     if (!pixmap_white->load(":/resources/white.png" ))
         qWarning("Failed to load white.png");
 
+    pixmap_empty = new QPixmap();
+    if (!pixmap_empty->load(":/resources/empty.png" ))
+        qWarning("Failed to load empty.png");
+
     createGameGrid();
     updateGameGrid();
 
@@ -42,17 +50,13 @@ void MainWindow::createGameGrid() {
     grid_layout->setSpacing(0);
     grid_layout->setMargin(0);
 
-    QPixmap pixmap_empty;
-    if (!pixmap_empty.load(":/resources/empty.png" ))
-        qWarning("Failed to load empty.png");
-
     for (int x = game->board_size(); x-- > 0; ) {
         for (int y = game->board_size(); y-- > 0; ) {
             ClickableLabel* label = new ClickableLabel(this);
             label->setMinimumSize(50, 50);
             label->setFrameStyle(QFrame::Panel + QFrame::Sunken);
             label->setAlignment(Qt::AlignCenter);
-            label->setPixmap(pixmap_empty);
+            label->setPixmap(*pixmap_empty);
             label->setScaledContents(true);
 
             connect(label, &ClickableLabel::clicked,
@@ -68,17 +72,21 @@ void MainWindow::createGameGrid() {
 }
 
 void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
-    std::cout << "clicked (" << x << "|" << (game->board_size() - y - 1) << ")" << std::endl;
-
     if (game->is_valid_move({x, game->board_size() - y - 1})) {
         std::stringstream ss((game->is_active() == Piece::black ? "Black" : "White"));
         ss << " played on [" << x << "|" << y << "]. Now it's ";
         game->make_move({x, game->board_size() - y - 1});
         ss << (game->is_active() == Piece::black ? "Blacks" : "Whites") << " turn.";
         statusBar()->showMessage(QString::fromStdString(ss.str()));
+
+        if (game->get_moves().size() > 0) {
+            RandomReversiPlayer player;
+            game->make_move(player.think(*game));
+        }
+
         updateGameGrid();
     }
-    if  (game->get_moves().size() == 0) statusBar()->showMessage("The Game is over!");
+    if (game->get_moves().size() == 0) statusBar()->showMessage("The Game is over!");
 }
 
 void MainWindow::updateGameGrid() {
