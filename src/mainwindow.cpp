@@ -71,6 +71,16 @@ void MainWindow::createGameGrid() {
     setCentralWidget(center);
 }
 
+void MainWindow::clearGameGrid() {
+    for (unsigned int x = 0; x < grid_layout->columnCount(); ++x) {
+        for (unsigned int y = 0; y < grid_layout->rowCount(); ++y) {
+            QLayoutItem *item = grid_layout->itemAtPosition(y, x);
+            auto label = dynamic_cast<ClickableLabel*>(item->widget());
+            label->setPixmap(*pixmap_empty);
+        }
+    }
+}
+
 void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
     if (game->is_valid_move({x, game->board_size() - y - 1})) {
         std::stringstream ss((game->is_active() == Piece::black ? "Black" : "White"));
@@ -86,7 +96,26 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
 
         updateGameGrid();
     }
-    if (game->get_moves().size() == 0) statusBar()->showMessage("The Game is over!");
+
+    if (game->get_moves().size() == 0) {
+        statusBar()->showMessage("The Game is over!");
+
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Game is over!");
+        msgBox.setText("This game of reversi is over. Close or restart?");
+        QPushButton *connectButton = msgBox.addButton(tr("Restart"), QMessageBox::ActionRole);
+        QPushButton *closeButton = msgBox.addButton(QMessageBox::Close);
+
+        msgBox.exec();
+
+        if (qobject_cast<QPushButton *>(msgBox.clickedButton()) == connectButton) {
+            game = std::make_unique<ReversiGame>(4);
+            clearGameGrid();
+            updateGameGrid();
+        } else if (qobject_cast<QPushButton *>(msgBox.clickedButton()) == closeButton) {
+            this->close();
+        }
+    }
 }
 
 void MainWindow::updateGameGrid() {

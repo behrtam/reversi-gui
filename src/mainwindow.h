@@ -3,11 +3,12 @@
 #ifndef QTHALLOWORLD_MAINWINDOW_H
 #define QTHALLOWORLD_MAINWINDOW_H
 
-#include <memory>
 
 #include <QMainWindow>
 #include <QWidget>
 #include <QGridLayout>
+
+#include <memory>
 
 #include "./reversi_game.h"
 #include "./clickablelabel.h"
@@ -33,6 +34,7 @@ class MainWindow : public QMainWindow {
     void clickedGamePiece(unsigned int x, unsigned int y);
 
     void updateGameGrid();
+    void clearGameGrid();
 };
 
 
