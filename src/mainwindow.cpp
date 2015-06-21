@@ -109,7 +109,7 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
         msgBox.exec();
 
         if (qobject_cast<QPushButton *>(msgBox.clickedButton()) == connectButton) {
-            game = std::make_unique<ReversiGame>(4);
+            game = std::make_unique<ReversiGame>(game->board_size());
             clearGameGrid();
             updateGameGrid();
         } else if (qobject_cast<QPushButton *>(msgBox.clickedButton()) == closeButton) {
