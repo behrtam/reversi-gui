@@ -1,6 +1,11 @@
 # reversi-gui
 c++ implementation of the board game REVERSI with gui (qt), single-/multiplayer, network, ai, ...
 
+## additional project documentation
+[requirements status](REQUIREMENTS.md)
+
+[todo list](TASKS.md)
+
 ## project setup help
 
 ### cmake and gcc/g++ version
