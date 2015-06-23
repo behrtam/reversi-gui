@@ -11,6 +11,9 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QAbstractButton>
+#include <QMenuBar>
+#include <QAction>
+
 
 #include <sstream>
 #include <memory>
@@ -22,10 +25,13 @@
 
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
-        : QMainWindow(parent, flags), game(std::make_unique<ReversiGame>()) {
+        : QMainWindow(parent, flags), game(std::make_unique<ReversiGame>(8)) {
     setObjectName("MainWindow");
     setWindowTitle("Reversi Main Window");
     resize(700, 700);
+
+    createActions();
+    createMenus();
 
     pixmap_black = new QPixmap();
     if (!pixmap_black->load(":/resources/black.png" ))
@@ -44,6 +50,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     statusBar()->showMessage(tr("Status Bar"));
 }
+
+
 
 void MainWindow::createGameGrid() {
     grid_layout = new QGridLayout;
@@ -96,8 +104,7 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
 
         updateGameGrid();
     }
-
-    if (game->get_moves().size() == 0) {
+    if  (game->get_moves().size() == 0) {
         statusBar()->showMessage("The Game is over!");
 
         QMessageBox msgBox;
@@ -130,4 +137,38 @@ void MainWindow::updateGameGrid() {
             label->setScaledContents(true);
         }
     }
+}
+
+void MainWindow::createActions() {
+    exitAct = new QAction(tr("E&xit"), this);
+    exitAct->setShortcuts(QKeySequence::Quit);
+    exitAct->setStatusTip(tr("Exit the application"));
+    connect(exitAct, &QAction::triggered, this, &MainWindow::close);
+
+    aboutAct = new QAction(tr("&About"), this);
+    aboutAct->setStatusTip(tr("Show the application's About box"));
+    connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
+}
+
+void MainWindow::createMenus() {
+    fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction("New game");
+    fileMenu->addAction("Open game");
+    fileMenu->addAction("Save game");
+    fileMenu->addSeparator();
+    fileMenu->addAction(exitAct);
+
+    settingsMenu = menuBar()->addMenu(tr("&Settings"));
+
+    aboutMenu = menuBar()->addMenu(tr("&About"));
+    aboutMenu->addAction(aboutAct);
+
+    // TODO: only use on mac
+    menuBar()->setNativeMenuBar(false);
+}
+
+void MainWindow::about() {
+    QMessageBox::about(this, tr("About Reversi"),
+                       tr("The <b>Reversi</b> game demonstrates how to "
+                          "write a simple board game in C++ with a GUI using Qt."));
 }
