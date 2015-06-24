@@ -25,7 +25,7 @@
 
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
-        : QMainWindow(parent, flags), game(std::make_unique<ReversiGame>(8)) {
+        : QMainWindow(parent, flags), game(std::make_unique<ReversiGame>()) {
     setObjectName("MainWindow");
     setWindowTitle("Reversi Main Window");
     resize(700, 700);
@@ -117,8 +117,7 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
 
         if (qobject_cast<QPushButton *>(msgBox.clickedButton()) == connectButton) {
             game = std::make_unique<ReversiGame>(game->board_size());
-            clearGameGrid();
-            updateGameGrid();
+            resetGame();
         } else if (qobject_cast<QPushButton *>(msgBox.clickedButton()) == closeButton) {
             this->close();
         }
@@ -145,6 +144,39 @@ void MainWindow::createActions() {
     exitAct->setStatusTip(tr("Exit the application"));
     connect(exitAct, &QAction::triggered, this, &MainWindow::close);
 
+    boardSize4 = new QAction(tr("4x4"), this);
+    boardSize4->setCheckable(true);
+    boardSize4->setStatusTip(tr("Change board size to 4x4"));
+    connect(boardSize4, &QAction::triggered, [this]{ changeBoardSize(4); });
+
+    boardSize6 = new QAction(tr("6x6"), this);
+    boardSize6->setCheckable(true);
+    boardSize6->setStatusTip(tr("Change board size to 6x6"));
+    connect(boardSize6, &QAction::triggered, [this]{ changeBoardSize(6); });
+
+    boardSize8 = new QAction(tr("8x8"), this);
+    boardSize8->setCheckable(true);
+    boardSize8->setStatusTip(tr("Change board size to 8x8"));
+    connect(boardSize8, &QAction::triggered, [this]{ changeBoardSize(8); });
+
+    boardSize10 = new QAction(tr("10x10"), this);
+    boardSize10->setCheckable(true);
+    boardSize10->setStatusTip(tr("Change board size to 10x10"));
+    connect(boardSize10, &QAction::triggered, [this]{ changeBoardSize(10); });
+
+    boardSize12 = new QAction(tr("12x12"), this);
+    boardSize12->setCheckable(true);
+    boardSize12->setStatusTip(tr("Change board size to 12x12"));
+    connect(boardSize12, &QAction::triggered, [this]{ changeBoardSize(12); });
+
+    boardSizeGroup = new QActionGroup(this);
+    boardSizeGroup->addAction(boardSize4);
+    boardSizeGroup->addAction(boardSize6);
+    boardSizeGroup->addAction(boardSize8);
+    boardSizeGroup->addAction(boardSize10);
+    boardSizeGroup->addAction(boardSize12);
+    boardSize8->setChecked(true);
+
     aboutAct = new QAction(tr("&About"), this);
     aboutAct->setStatusTip(tr("Show the application's About box"));
     connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
@@ -159,6 +191,13 @@ void MainWindow::createMenus() {
     fileMenu->addAction(exitAct);
 
     settingsMenu = menuBar()->addMenu(tr("&Settings"));
+    settingsMenu->addAction("Some thing");
+    boardSizeMenu = settingsMenu->addMenu(tr("&Board size"));
+    boardSizeMenu->addAction(boardSize4);
+    boardSizeMenu->addAction(boardSize6);
+    boardSizeMenu->addAction(boardSize8);
+    boardSizeMenu->addAction(boardSize10);
+    boardSizeMenu->addAction(boardSize12);
 
     aboutMenu = menuBar()->addMenu(tr("&About"));
     aboutMenu->addAction(aboutAct);
@@ -169,6 +208,33 @@ void MainWindow::createMenus() {
 
 void MainWindow::about() {
     QMessageBox::about(this, tr("About Reversi"),
-                       tr("The <b>Reversi</b> game demonstrates how to "
-                          "write a simple board game in C++ with a GUI using Qt."));
+                       tr("The <b>Reversi</b> game demonstrates how to write a simple"
+                          " board game in C++14 with a GUI using Qt 5."));
+}
+
+void MainWindow::changeBoardSize(unsigned int size) {
+    QMessageBox msgBox;
+    msgBox.setText("Reset running game.");
+    msgBox.setInformativeText("Do you want to reset your game to apply changes?");
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+
+    if (!gameIsRunning() || (msgBox.exec() == QMessageBox::Ok)) {
+        game = std::make_unique<ReversiGame>(size);
+        resetGame();
+    }
+}
+
+void MainWindow::resetGame() {
+    if (grid_layout->columnCount() == game->board_size()) {
+        clearGameGrid();
+    } else {
+        createGameGrid();
+    }
+    updateGameGrid();
+}
+
+bool MainWindow::gameIsRunning() {
+    // TODO: check if first move has been done and moves are available
+    return true;
 }

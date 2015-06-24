@@ -30,10 +30,18 @@ class MainWindow : public QMainWindow {
 
     QMenu *fileMenu;
     QMenu *settingsMenu;
+    QMenu *boardSizeMenu;
     QMenu *aboutMenu;
 
     QAction *exitAct;
     QAction *aboutAct;
+
+    QActionGroup *boardSizeGroup;
+    QAction *boardSize4;
+    QAction *boardSize6;
+    QAction *boardSize8;
+    QAction *boardSize10;
+    QAction *boardSize12;
 
  public:
     explicit MainWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0);
@@ -43,11 +51,15 @@ class MainWindow : public QMainWindow {
     void clickedGamePiece(unsigned int x, unsigned int y);
     void updateGameGrid();
     void clearGameGrid();
+    void resetGame();
+    bool gameIsRunning();
 
     void createActions();
     void createMenus();
 
     void about();
+
+    void changeBoardSize(unsigned int size);
 };
 
 
