@@ -48,17 +48,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     if (!pixmap_empty->load(":/resources/empty.png" ))
         qWarning("Failed to load empty.png");
 
+    createSidebar();
     createGameGrid();
-    updateGameGrid();
-    createSidebar();    
-
-    boxLayout = new QHBoxLayout(this);
-    boxLayout->addItem(grid_layout);
-    boxLayout->addWidget(sidebar);
-
-    center = new QWidget(this);  // dummy wrapper widget
-    center->setLayout(boxLayout);
-    setCentralWidget(center);
+    updateGameGrid();   
 
     statusBar()->showMessage(tr("Status Bar"));
 }
@@ -67,6 +59,14 @@ void MainWindow::createSidebar(){
     sidebar = new QWidget(this);
     sidebar->setStyleSheet("background-color:red;");
     sidebar->setMinimumWidth(200);
+
+    QPushButton *restartButton = new QPushButton("Restart", sidebar);
+    connect(restartButton, &QPushButton::clicked, [this]{
+        if (resetMsgBox->exec() == QMessageBox::Ok) {
+            game = std::make_unique<ReversiGame>(game->board_size());
+            resetGame();
+        }
+    });
 }
 
 void MainWindow::createGameGrid() {
@@ -89,6 +89,18 @@ void MainWindow::createGameGrid() {
             grid_layout->addWidget(label, y, x);
         }
     }
+
+    // TODO: layout problem needs to be fixed
+    // QLayout: Attempting to add QLayout "" to MainWindow "MainWindow",
+    // which already has a layout
+
+    boxLayout = new QHBoxLayout(this);
+    boxLayout->addItem(grid_layout);
+    boxLayout->addWidget(sidebar);
+
+    center = new QWidget(this);  // dummy wrapper widget
+    center->setLayout(boxLayout);
+    setCentralWidget(center);
 }
 
 void MainWindow::clearGameGrid() {
