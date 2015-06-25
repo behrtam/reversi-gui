@@ -24,6 +24,8 @@ class MainWindow : public QMainWindow {
     QGridLayout* grid_layout;
 
     std::unique_ptr<ReversiGame> game;
+    QString playername_black_;
+    QString playername_white_;
 
     QPixmap* pixmap_black;
     QPixmap* pixmap_white;
@@ -49,6 +51,18 @@ class MainWindow : public QMainWindow {
 
  public:
     explicit MainWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0);
+
+    QString playername_black() const { return playername_black_; }
+    void playername_black(const QString& playername) {
+        if (playername.isNull() || playername.isEmpty()) return;
+        playername_black_ = playername;
+    }
+
+    const QString& playername_white() const { return playername_white_; }
+    void playername_white(const QString& playername) {
+        if (playername.isNull() || playername.isEmpty()) return;
+        playername_white_ = playername;
+    }
 
  private:
     void createGameGrid();
