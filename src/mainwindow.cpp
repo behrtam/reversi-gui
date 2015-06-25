@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
         : QMainWindow(parent, flags), game(std::make_unique<ReversiGame>()) {
     setObjectName("MainWindow");
     setWindowTitle("Reversi Main Window");
-    resize(700, 700);
+    resize(800, 700);
 
     createActions();
     createMenus();
@@ -50,11 +50,24 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     createGameGrid();
     updateGameGrid();
+    createSidebar();    
+
+    boxLayout = new QHBoxLayout(this);
+    boxLayout->addItem(grid_layout);
+    boxLayout->addWidget(sidebar);
+
+    center = new QWidget(this);  // dummy wrapper widget
+    center->setLayout(boxLayout);
+    setCentralWidget(center);
 
     statusBar()->showMessage(tr("Status Bar"));
 }
 
-
+void MainWindow::createSidebar(){
+    sidebar = new QWidget(this);
+    sidebar->setStyleSheet("background-color:red;");
+    sidebar->setMinimumWidth(200);
+}
 
 void MainWindow::createGameGrid() {
     grid_layout = new QGridLayout;
@@ -76,10 +89,6 @@ void MainWindow::createGameGrid() {
             grid_layout->addWidget(label, y, x);
         }
     }
-
-    center = new QWidget(this);  // dummy wrapper widget
-    center->setLayout(grid_layout);
-    setCentralWidget(center);
 }
 
 void MainWindow::clearGameGrid() {

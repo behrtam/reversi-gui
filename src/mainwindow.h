@@ -23,6 +23,9 @@ class MainWindow : public QMainWindow {
     QWidget* center;
     QGridLayout* grid_layout;
 
+    QWidget *sidebar;
+    QHBoxLayout* boxLayout;
+
     std::unique_ptr<ReversiGame> game;
     QString playername_black_;
     QString playername_white_;
@@ -75,6 +78,8 @@ class MainWindow : public QMainWindow {
     void createActions();
     void createMenus();
     void createMsgBox();
+
+    void createSidebar();
 
     void about();
 
