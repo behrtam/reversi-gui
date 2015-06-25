@@ -9,6 +9,7 @@
 #include <QGridLayout>
 #include <QMenu>
 #include <QAction>
+#include <QMessageBox>
 
 #include <memory>
 
@@ -33,6 +34,7 @@ class MainWindow : public QMainWindow {
     QMenu *boardSizeMenu;
     QMenu *aboutMenu;
 
+    QAction *newGameAct;
     QAction *exitAct;
     QAction *aboutAct;
 
@@ -42,6 +44,8 @@ class MainWindow : public QMainWindow {
     QAction *boardSize8;
     QAction *boardSize10;
     QAction *boardSize12;
+
+    QMessageBox* resetMsgBox;
 
  public:
     explicit MainWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0);
@@ -56,6 +60,7 @@ class MainWindow : public QMainWindow {
 
     void createActions();
     void createMenus();
+    void createMsgBox();
 
     void about();
 

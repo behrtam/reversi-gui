@@ -14,7 +14,6 @@
 #include <QMenuBar>
 #include <QAction>
 
-
 #include <sstream>
 #include <memory>
 
@@ -32,6 +31,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     createActions();
     createMenus();
+    createMsgBox();
 
     pixmap_black = new QPixmap();
     if (!pixmap_black->load(":/resources/black.png" ))
@@ -139,6 +139,16 @@ void MainWindow::updateGameGrid() {
 }
 
 void MainWindow::createActions() {
+    newGameAct = new QAction(tr("&New game"), this);
+    newGameAct->setShortcuts(QKeySequence::New);
+    newGameAct->setStatusTip(tr("Create a new game"));
+    connect(newGameAct, &QAction::triggered, [this]{
+        if (resetMsgBox->exec() == QMessageBox::Ok) {
+            game = std::make_unique<ReversiGame>(game->board_size());
+            resetGame();
+        }
+    });
+
     exitAct = new QAction(tr("E&xit"), this);
     exitAct->setShortcuts(QKeySequence::Quit);
     exitAct->setStatusTip(tr("Exit the application"));
@@ -184,7 +194,7 @@ void MainWindow::createActions() {
 
 void MainWindow::createMenus() {
     fileMenu = menuBar()->addMenu(tr("&File"));
-    fileMenu->addAction("New game");
+    fileMenu->addAction(newGameAct);
     fileMenu->addAction("Open game");
     fileMenu->addAction("Save game");
     fileMenu->addSeparator();
@@ -192,6 +202,7 @@ void MainWindow::createMenus() {
 
     settingsMenu = menuBar()->addMenu(tr("&Settings"));
     settingsMenu->addAction("Some thing");
+
     boardSizeMenu = settingsMenu->addMenu(tr("&Board size"));
     boardSizeMenu->addAction(boardSize4);
     boardSizeMenu->addAction(boardSize6);
@@ -213,13 +224,7 @@ void MainWindow::about() {
 }
 
 void MainWindow::changeBoardSize(unsigned int size) {
-    QMessageBox msgBox;
-    msgBox.setText("Reset running game.");
-    msgBox.setInformativeText("Do you want to reset your game to apply changes?");
-    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-    msgBox.setDefaultButton(QMessageBox::Ok);
-
-    if (!gameIsRunning() || (msgBox.exec() == QMessageBox::Ok)) {
+    if (!gameIsRunning() || (resetMsgBox->exec() == QMessageBox::Ok)) {
         game = std::make_unique<ReversiGame>(size);
         resetGame();
     }
@@ -237,4 +242,12 @@ void MainWindow::resetGame() {
 bool MainWindow::gameIsRunning() {
     // TODO: check if first move has been done and moves are available
     return true;
+}
+
+void MainWindow::createMsgBox() {
+    resetMsgBox = new QMessageBox(this);
+    resetMsgBox->setText("Reset running game.");
+    resetMsgBox->setInformativeText("Do you want to reset your game to apply changes?");
+    resetMsgBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    resetMsgBox->setDefaultButton(QMessageBox::Ok);
 }
