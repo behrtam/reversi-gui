@@ -33,6 +33,9 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     createMenus();
     createMsgBox();
 
+    playername_black_ = "Mr. Black";
+    playername_white_ = "Ms. White";
+
     pixmap_black = new QPixmap();
     if (!pixmap_black->load(":/resources/black.png" ))
         qWarning("Failed to load black.png");
@@ -105,11 +108,22 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
         updateGameGrid();
     }
     if  (game->get_moves().size() == 0) {
+        unsigned int score_white, score_black;
+        std::tie(score_white, score_black) = game->get_score();
+
         statusBar()->showMessage("The Game is over!");
 
         QMessageBox msgBox;
         msgBox.setWindowTitle("Game is over!");
-        msgBox.setText("This game of reversi is over. Close or restart?");
+
+        if (score_white > score_black) {
+            msgBox.setText(playername_white_ + " won this round!");
+        } else {
+            msgBox.setText(playername_black_ + " won this round!");
+        }
+        msgBox.setInformativeText(QString("%1 has %2 pieces. %3 has %4 pieces. Restart or close?")
+                                          .arg(playername_white_).arg(score_white)
+                                          .arg(playername_black_).arg(score_black));
         QPushButton *connectButton = msgBox.addButton(tr("Restart"), QMessageBox::ActionRole);
         QPushButton *closeButton = msgBox.addButton(QMessageBox::Close);
 
