@@ -13,6 +13,7 @@
 #include <QAbstractButton>
 #include <QMenuBar>
 #include <QAction>
+#include <QSound>
 
 #include <sstream>
 #include <memory>
@@ -47,6 +48,10 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     pixmap_empty = new QPixmap();
     if (!pixmap_empty->load(":/resources/empty.png" ))
         qWarning("Failed to load empty.png");
+
+    tapped = new QSound(":/resources/tapped.wav");
+    timber = new QSound(":/resources/timber.wav");
+    xylo = new QSound(":/resources/xylo.wav");
 
     createSidebar();
     createGameGrid();
@@ -118,15 +123,19 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
         std::stringstream ss((game->is_active() == Piece::black ? "Black" : "White"));
         ss << " played on [" << x << "|" << y << "]. Now it's ";
         game->make_move({x, game->board_size() - y - 1});
+        tapped->play();
         ss << (game->is_active() == Piece::black ? "Blacks" : "Whites") << " turn.";
         statusBar()->showMessage(QString::fromStdString(ss.str()));
 
         if (game->possible_moves().size() > 0) {
             RandomReversiPlayer player;
             game->make_move(player.think(*game));
+            // timber->play();
         }
 
         updateGameGrid();
+    } else {
+        xylo->play();
     }
     if  (game->possible_moves().size() == 0) {
         unsigned int score_white, score_black;
