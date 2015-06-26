@@ -37,7 +37,7 @@ We got them in german ... sorry. Strikethrough indicates that this is already do
 
 (12) Das Programm lässt sich einfach für eine Linux-Plattform übersetzen und die Tests laufen dabei automatisch ab. Build-Artefakte werden sowohl für für Linux und für eine weitere Plattform wie Windows oder OS X erzeugt und optional für eine mobilen Plattform. Das Bauen der Artefakte wird über ein Containerlösung wie Docker realisiert. (Punkte 4)
 
-### 1.3 Projektspezifische Anforderungen (Punkte 2/30)
+### 1.3 Projektspezifische Anforderungen (Punkte 3/30)
 
 ~~(13) Es können zwei Menschen gegeneinander oder ein Mensch gegen den Computer spielen.~~ **(Punkte 1)**
 
@@ -49,7 +49,7 @@ We got them in german ... sorry. Strikethrough indicates that this is already do
 
 ~~(17) Die Größe des Spielfelds soll vor Spielstart in der GUI konfigurierbar sein (z.B. 5 bis 10 Zeilen und Spalten, voreingestellt 8x8 wie im echten Spiel).~~ **(Punkte 1)**
 
-(18) Beim Setzen eines Spielsteines soll ein Sound abgespielt werden, für jede Partei ein anderer. (Punkte 1)
+~~(18) Beim Setzen eines Spielsteines soll ein Sound abgespielt werden, für jede Partei ein anderer.~~ **(Punkte 1)**
 
 (19) Das Umdrehen eines gegnerischen Spielsteins soll animiert sein. (Punkte 1)
 
