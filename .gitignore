@@ -23,6 +23,8 @@ install_manifest.txt
 # project executables
 reversi
 reversi_tests
+build/**
+!build/.gitkeep
 
 # Qt-es
 
