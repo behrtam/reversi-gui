@@ -40,7 +40,7 @@ TEST_F(ReversiGameTest, ConstructorFail) {
 }
 
 TEST_F(ReversiGameTest, PossibleMovesAtStart) {
-    auto moves = default_game.get_moves();
+    auto moves = default_game.possible_moves();
     ASSERT_EQ(4, moves.size());
 
     // ToDo: would be better to check contains instead of exact position
@@ -64,7 +64,7 @@ TEST_F(ReversiGameTest, LongDefaultGame) {
     for (auto m : test_moves)
         game.make_move(m);
 
-    auto moves = game.get_moves();
+    auto moves = game.possible_moves();
     ASSERT_EQ(11, moves.size());
 
     EXPECT_EQ((Square{0, 1}), (moves[0].first));
@@ -104,14 +104,14 @@ TEST_F(ReversiGameTest, BlindFlightFullBoardGame) {
     int c = 0;
 
     while (true) {
-        auto moves = game.get_moves();
+        auto moves = game.possible_moves();
         if (moves.size() == 0) break;
         auto move = (++c % 2) ? moves.front().first : moves.back().first;
         game.make_move(move);
     }
 
     EXPECT_EQ(57, c);
-    EXPECT_EQ(0, game.get_moves().size());
+    EXPECT_EQ(0, game.possible_moves().size());
     EXPECT_EQ(Piece::black, game.is_active());
 
     auto score = game.get_score();
@@ -122,7 +122,7 @@ TEST_F(ReversiGameTest, BlindFlightFullBoardGame) {
 
 TEST_F(ReversiGameTest, ActivePlayer) {
     ReversiGame game;
-    game.make_move(game.get_moves()[0].first);
+    game.make_move(game.possible_moves()[0].first);
     ASSERT_EQ(Piece::black, game.is_active());
 }
 
@@ -133,7 +133,7 @@ TEST_F(ReversiGameTest, ActivePlayerAfterImpossibleMove) {
 }
 
 TEST_F(ReversiGameTest, ValidMove) {
-    ASSERT_TRUE(default_game.is_valid_move(default_game.get_moves()[0].first));
+    ASSERT_TRUE(default_game.is_valid_move(default_game.possible_moves()[0].first));
 }
 
 TEST_F(ReversiGameTest, ValidMoveNegative) {
@@ -148,7 +148,7 @@ TEST_F(ReversiGameTest, ScoreAtStart) {
 
 TEST_F(ReversiGameTest, Score) {
     ReversiGame game;
-    game.make_move(game.get_moves()[0].first);
+    game.make_move(game.possible_moves()[0].first);
     auto score = game.get_score();
     EXPECT_EQ(4, score.first);
     EXPECT_EQ(1, score.second);
@@ -190,4 +190,23 @@ TEST_F(ReversiGameTest, CheckGetMoveUpLeft) {
     ASSERT_TRUE(game.is_valid_move({0, 2}));
     game.make_move({0, 2});
     ASSERT_TRUE(game.is_valid_move({0, 3}));
+}
+
+TEST_F(ReversiGameTest, MovesCountAtStart) {
+    ASSERT_EQ(0, default_game.moves());
+}
+
+TEST_F(ReversiGameTest, MovesCount) {
+    ReversiGame game(4);
+    game.make_move({1, 0});
+    ASSERT_EQ(1, game.moves());
+    game.make_move({0, 2});
+    ASSERT_EQ(2, game.moves());
+}
+
+TEST_F(ReversiGameTest, MovesCountInvalidMove) {
+    ReversiGame game(4);
+    EXPECT_FALSE(game.is_valid_move({0, 0}));
+    game.make_move({0, 0});
+    ASSERT_EQ(0, default_game.moves());
 }
