@@ -50,14 +50,14 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     createSidebar();
     createGameGrid();
-    updateGameGrid();   
+    updateGameGrid();
 
     statusBar()->showMessage(tr("Status Bar"));
 }
 
-void MainWindow::createSidebar(){
+void MainWindow::createSidebar() {
     sidebar = new QWidget(this);
-    sidebar->setStyleSheet("background-color:red;");
+    sidebar->setStyleSheet("background-color:gray;");
     sidebar->setMinimumWidth(200);
 
     QPushButton *restartButton = new QPushButton("Restart", sidebar);
@@ -94,7 +94,7 @@ void MainWindow::createGameGrid() {
     // QLayout: Attempting to add QLayout "" to MainWindow "MainWindow",
     // which already has a layout
 
-    boxLayout = new QHBoxLayout(this);
+    boxLayout = new QHBoxLayout();
     boxLayout->addItem(grid_layout);
     boxLayout->addWidget(sidebar);
 
@@ -121,14 +121,14 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
         ss << (game->is_active() == Piece::black ? "Blacks" : "Whites") << " turn.";
         statusBar()->showMessage(QString::fromStdString(ss.str()));
 
-        if (game->get_moves().size() > 0) {
+        if (game->possible_moves().size() > 0) {
             RandomReversiPlayer player;
             game->make_move(player.think(*game));
         }
 
         updateGameGrid();
     }
-    if  (game->get_moves().size() == 0) {
+    if  (game->possible_moves().size() == 0) {
         unsigned int score_white, score_black;
         std::tie(score_white, score_black) = game->get_score();
 
@@ -178,7 +178,7 @@ void MainWindow::createActions() {
     newGameAct->setShortcuts(QKeySequence::New);
     newGameAct->setStatusTip(tr("Create a new game"));
     connect(newGameAct, &QAction::triggered, [this]{
-        if (resetMsgBox->exec() == QMessageBox::Ok) {
+        if (!gameIsRunning() || (resetMsgBox->exec() == QMessageBox::Ok)) {
             game = std::make_unique<ReversiGame>(game->board_size());
             resetGame();
         }
@@ -275,8 +275,7 @@ void MainWindow::resetGame() {
 }
 
 bool MainWindow::gameIsRunning() {
-    // TODO: check if first move has been done and moves are available
-    return true;
+    return game->moves() > 0 && game->moves_possible();
 }
 
 void MainWindow::createMsgBox() {
