@@ -15,6 +15,7 @@
 class ReversiGame {
  private:
     const unsigned int size_;
+    unsigned int moves_;
     std::vector<Piece> board_;
     std::vector<std::pair<Square, std::vector<Square>>> possible_moves_;
     Piece active_;
@@ -34,7 +35,7 @@ class ReversiGame {
 
     Piece get_piece(Square s) const;
 
-    auto get_moves() const { return possible_moves_; }
+    auto possible_moves() const { return possible_moves_; }
 
     bool is_valid_move(Square s) const;
 
@@ -43,6 +44,8 @@ class ReversiGame {
     bool moves_possible() const { return !possible_moves_.empty(); }
 
     Piece is_active() const { return active_; }
+
+    unsigned int moves() const { return moves_; }
 
  private:
     Piece get_piece(unsigned int x, unsigned int y) const;

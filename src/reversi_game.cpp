@@ -9,7 +9,7 @@
 #include "./utils.h"
 
 
-ReversiGame::ReversiGame(unsigned int size) : size_(size), board_(size * size) {
+ReversiGame::ReversiGame(unsigned int size) : moves_(0), size_(size), board_(size * size) {
     if (size < 4 || size > 16 || size % 2 == 1)
         throw std::out_of_range{"ReversiGame(int)"};
 
@@ -173,6 +173,7 @@ void ReversiGame::make_move(Square s) {
             flip_pieces((*moves).first, end);
         }
         active_ = invert(active_);
+        ++moves_;
         set_all_moves();
     }
 }

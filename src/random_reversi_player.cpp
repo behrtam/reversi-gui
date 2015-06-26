@@ -11,7 +11,7 @@ Square RandomReversiPlayer::think(const ReversiGame& game) {
     static std::random_device rd;
     static std::mt19937 g(rd());
 
-    auto moves = game.get_moves();
+    auto moves = game.possible_moves();
     std::shuffle(moves.begin(), moves.end(), g);
     return moves.front().first;
 }
