@@ -17,6 +17,7 @@
 #include "./reversi_game.h"
 #include "./clickablelabel.h"
 
+
 class MainWindow : public QMainWindow {
     Q_OBJECT
 
@@ -74,21 +75,24 @@ class MainWindow : public QMainWindow {
 
  private:
     void createGameGrid();
-    void clickedGamePiece(unsigned int x, unsigned int y);
     void updateGameGrid();
     void clearGameGrid();
-    void resetGame();
+
+    void clickedGamePiece(unsigned int x, unsigned int y);
     bool gameIsRunning();
+
+    void resetGame();
+    void changeBoardSize(unsigned int size);
 
     void createActions();
     void createMenus();
     void createMsgBox();
 
     void createSidebar();
-
     void about();
 
-    void changeBoardSize(unsigned int size);
+    void loadImages();
+    void loadSounds();
 };
 
 

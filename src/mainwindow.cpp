@@ -37,6 +37,31 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     playername_black_ = "Mr. Black";
     playername_white_ = "Ms. White";
 
+    loadImages();
+    loadSounds();
+
+    createSidebar();
+    createGameGrid();
+    updateGameGrid();
+
+    statusBar()->showMessage(tr("Status Bar"));
+}
+
+void MainWindow::loadSounds() {
+    tapped = new QSound(":/resources/tapped.wav");
+    if (!QFile::exists(":/resources/tapped.wav"))
+        qWarning("Failed to load tapped.wav");
+
+    timber = new QSound(":/resources/timber.wav");
+    if (!QFile::exists(":/resources/timber.wav"))
+        qWarning("Failed to load timber.wav");
+
+    xylo = new QSound(":/resources/xylo.wav");
+    if (!QFile::exists(":/resources/xylo.wav"))
+        qWarning("Failed to load xylo.wav");
+}
+
+void MainWindow::loadImages() {
     pixmap_black = new QPixmap();
     if (!pixmap_black->load(":/resources/black.png" ))
         qWarning("Failed to load black.png");
@@ -48,16 +73,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     pixmap_empty = new QPixmap();
     if (!pixmap_empty->load(":/resources/empty.png" ))
         qWarning("Failed to load empty.png");
-
-    tapped = new QSound(":/resources/tapped.wav");
-    timber = new QSound(":/resources/timber.wav");
-    xylo = new QSound(":/resources/xylo.wav");
-
-    createSidebar();
-    createGameGrid();
-    updateGameGrid();
-
-    statusBar()->showMessage(tr("Status Bar"));
 }
 
 void MainWindow::createSidebar() {
