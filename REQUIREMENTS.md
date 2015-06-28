@@ -37,11 +37,11 @@ We got them in german ... sorry. Strikethrough indicates that this is already do
 
 (12) Das Programm lässt sich einfach für eine Linux-Plattform übersetzen und die Tests laufen dabei automatisch ab. Build-Artefakte werden sowohl für für Linux und für eine weitere Plattform wie Windows oder OS X erzeugt und optional für eine mobilen Plattform. Das Bauen der Artefakte wird über ein Containerlösung wie Docker realisiert. (Punkte 4)
 
-### 1.3 Projektspezifische Anforderungen (Punkte 3/30)
+### 1.3 Projektspezifische Anforderungen (Punkte 4/30)
 
 ~~(13) Es können zwei Menschen gegeneinander oder ein Mensch gegen den Computer spielen.~~ **(Punkte 1)**
 
-(14) Beim Spiel Mensch gegen Computer kann ausgewählt werden, wer beginnt. (Punkte 1)
+~~(14) Beim Spiel Mensch gegen Computer kann ausgewählt werden, wer beginnt.~~ **(Punkte 1)**
 
 (15) Menschliche Spieler sollen vor Spielbeginn in der GUI ihre(n) Namen eingeben. (Punkte 1)
 
