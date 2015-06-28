@@ -10,6 +10,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QMessageBox>
+#include <QSound>
 
 #include <memory>
 
@@ -51,6 +52,10 @@ class MainWindow : public QMainWindow {
     QAction *boardSize12;
 
     QMessageBox* resetMsgBox;
+
+    QSound* tapped;
+    QSound* timber;
+    QSound* xylo;
 
  public:
     explicit MainWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0);

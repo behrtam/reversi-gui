@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="resources">
+    <file>tapped.wav</file>
+    <file>xylo.wav</file>
+    <file>timber.wav</file>
+</qresource>
+</RCC>

@@ -13,6 +13,7 @@
 #include <QAbstractButton>
 #include <QMenuBar>
 #include <QAction>
+#include <QSound>
 
 #include <sstream>
 #include <memory>
@@ -48,16 +49,20 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     if (!pixmap_empty->load(":/resources/empty.png" ))
         qWarning("Failed to load empty.png");
 
+    tapped = new QSound(":/resources/tapped.wav");
+    timber = new QSound(":/resources/timber.wav");
+    xylo = new QSound(":/resources/xylo.wav");
+
     createSidebar();
     createGameGrid();
-    updateGameGrid();   
+    updateGameGrid();
 
     statusBar()->showMessage(tr("Status Bar"));
 }
 
-void MainWindow::createSidebar(){
+void MainWindow::createSidebar() {
     sidebar = new QWidget(this);
-    sidebar->setStyleSheet("background-color:red;");
+    sidebar->setStyleSheet("background-color:gray;");
     sidebar->setMinimumWidth(200);
 
     QPushButton *restartButton = new QPushButton("Restart", sidebar);
@@ -94,7 +99,7 @@ void MainWindow::createGameGrid() {
     // QLayout: Attempting to add QLayout "" to MainWindow "MainWindow",
     // which already has a layout
 
-    boxLayout = new QHBoxLayout(this);
+    boxLayout = new QHBoxLayout();
     boxLayout->addItem(grid_layout);
     boxLayout->addWidget(sidebar);
 
@@ -118,17 +123,21 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
         std::stringstream ss((game->is_active() == Piece::black ? "Black" : "White"));
         ss << " played on [" << x << "|" << y << "]. Now it's ";
         game->make_move({x, game->board_size() - y - 1});
+        tapped->play();
         ss << (game->is_active() == Piece::black ? "Blacks" : "Whites") << " turn.";
         statusBar()->showMessage(QString::fromStdString(ss.str()));
 
-        if (game->get_moves().size() > 0) {
+        if (game->possible_moves().size() > 0) {
             RandomReversiPlayer player;
             game->make_move(player.think(*game));
+            // timber->play();
         }
 
         updateGameGrid();
+    } else {
+        xylo->play();
     }
-    if  (game->get_moves().size() == 0) {
+    if  (game->possible_moves().size() == 0) {
         unsigned int score_white, score_black;
         std::tie(score_white, score_black) = game->get_score();
 
@@ -186,7 +195,7 @@ void MainWindow::createActions() {
     newGameAct->setShortcuts(QKeySequence::New);
     newGameAct->setStatusTip(tr("Create a new game"));
     connect(newGameAct, &QAction::triggered, [this]{
-        if (resetMsgBox->exec() == QMessageBox::Ok) {
+        if (!gameIsRunning() || (resetMsgBox->exec() == QMessageBox::Ok)) {
             game = std::make_unique<ReversiGame>(game->board_size());
             resetGame();
         }
@@ -283,8 +292,7 @@ void MainWindow::resetGame() {
 }
 
 bool MainWindow::gameIsRunning() {
-    // TODO: check if first move has been done and moves are available
-    return true;
+    return game->moves() > 0 && game->moves_possible();
 }
 
 void MainWindow::createMsgBox() {
