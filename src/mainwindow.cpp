@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
         : QMainWindow(parent, flags), game(std::make_unique<ReversiGame>()) {
     setObjectName("MainWindow");
     setWindowTitle("Reversi Main Window");
-    resize(800, 700);
+    resize(800, 650);
 
     createActions();
     createMenus();
@@ -148,8 +148,11 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
 
         if (score_white > score_black) {
             msgBox.setText(playername_white_ + " won this round!");
-        } else {
+        } 
+        else if (score_white < score_black){
             msgBox.setText(playername_black_ + " won this round!");
+        } else {
+            msgBox.setText("It's a draw!");
         }
         msgBox.setInformativeText(QString("%1 has %2 pieces. %3 has %4 pieces. Restart or close?")
                                           .arg(playername_white_).arg(score_white)
