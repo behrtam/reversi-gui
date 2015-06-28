@@ -52,6 +52,8 @@ class MainWindow : public QMainWindow {
     QAction *boardSize10;
     QAction *boardSize12;
 
+    QAction *startingPlayer;
+
     QMessageBox* resetMsgBox;
 
     QSound* tapped;

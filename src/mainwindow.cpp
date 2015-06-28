@@ -174,8 +174,7 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
 
         if (score_white > score_black) {
             msgBox.setText(playername_white_ + " won this round!");
-        } 
-        else if (score_white < score_black){
+        } else if (score_white < score_black) {
             msgBox.setText(playername_black_ + " won this round!");
         } else {
             msgBox.setText("It's a draw!");
@@ -225,7 +224,8 @@ void MainWindow::createActions() {
     newGameAct->setStatusTip(tr("Create a new game"));
     connect(newGameAct, &QAction::triggered, [this]{
         if (!gameIsRunning() || (resetMsgBox->exec() == QMessageBox::Ok)) {
-            game = std::make_unique<ReversiGame>(game->board_size());
+            Piece starter = startingPlayer->isChecked() ? Piece::black : Piece::white;
+            game = std::make_unique<ReversiGame>(game->board_size(), starter);
             resetGame();
         }
     });
@@ -273,6 +273,16 @@ void MainWindow::createActions() {
     boardSizeGroup->addAction(boardSize12);
     boardSize8->setChecked(true);
 
+    startingPlayer = new QAction(tr("Black starts"), this);
+    startingPlayer->setCheckable(true);
+    connect(startingPlayer, &QAction::toggled, [this](bool checked){
+        if (!gameIsRunning() || (resetMsgBox->exec() == QMessageBox::Ok)) {
+            game = std::make_unique<ReversiGame>(game->board_size(),
+                                                 checked ? Piece::black : Piece::white);
+            resetGame();
+        }
+    });
+
     aboutAct = new QAction(tr("&About"), this);
     aboutAct->setStatusTip(tr("Show the application's About box"));
     connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
@@ -309,6 +319,8 @@ void MainWindow::createMenus() {
     boardSizeMenu->addAction(boardSize8);
     boardSizeMenu->addAction(boardSize10);
     boardSizeMenu->addAction(boardSize12);
+
+    settingsMenu->addAction(startingPlayer);
 
     aboutMenu = menuBar()->addMenu(tr("&About"));
     aboutMenu->addAction(aboutAct);
