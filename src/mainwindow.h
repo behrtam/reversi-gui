@@ -81,6 +81,7 @@ class MainWindow : public QMainWindow {
     bool gameIsRunning();
 
     void createActions();
+    //QAction* createBoardSizeAction(unsigned int boardSizeNumber);
     void createMenus();
     void createMsgBox();
 
