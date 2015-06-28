@@ -166,7 +166,15 @@ void MainWindow::updateGameGrid() {
             auto label = dynamic_cast<ClickableLabel*>(item->widget());
 
             Piece p = game->get_piece({x, game->board_size() - y - 1});
-            if (p == Piece::black) label->setPixmap(*pixmap_black);
+
+            //   alter zustand                     neur zustand
+            // if (label->getPixmap() == black && p == Piece::white)
+
+            if (p == Piece::black) {
+                // if label != black
+                // animate
+                label->setPixmap(*pixmap_black);
+            }
             else if (p == Piece::white) label->setPixmap(*pixmap_white);
             label->setScaledContents(true);
         }
