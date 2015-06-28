@@ -22,8 +22,9 @@ class ReversiGame {
 
  public:
     ReversiGame() : ReversiGame(8) { }
-
-    explicit ReversiGame(unsigned int size);
+    explicit ReversiGame(unsigned int size) : ReversiGame(size, Piece::white) { }
+    explicit ReversiGame(Piece starting_player) : ReversiGame(8, starting_player) { }
+    ReversiGame(unsigned int size, Piece starting_player);
 
     void display_board() const;
 
