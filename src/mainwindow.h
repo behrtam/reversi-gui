@@ -85,6 +85,7 @@ class MainWindow : public QMainWindow {
     void changeBoardSize(unsigned int size);
 
     void createActions();
+    //QAction* createBoardSizeAction(unsigned int boardSizeNumber);
     void createMenus();
     void createMsgBox();
 

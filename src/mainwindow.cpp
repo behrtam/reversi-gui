@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
         : QMainWindow(parent, flags), game(std::make_unique<ReversiGame>()) {
     setObjectName("MainWindow");
     setWindowTitle("Reversi Main Window");
-    resize(800, 700);
+    resize(800, 650);
 
     createActions();
     createMenus();
@@ -81,12 +81,20 @@ void MainWindow::createSidebar() {
     sidebar->setMinimumWidth(200);
 
     QPushButton *restartButton = new QPushButton("Restart", sidebar);
+    restartButton->setGeometry(QRect(QPoint(50, 50), QSize(100, 50)));
+    restartButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(restartButton, &QPushButton::clicked, [this]{
         if (resetMsgBox->exec() == QMessageBox::Ok) {
             game = std::make_unique<ReversiGame>(game->board_size());
             resetGame();
         }
     });
+
+
+    QPushButton *exitButton = new QPushButton("Exit", sidebar);
+    exitButton->setGeometry(QRect(QPoint(50, 100), QSize(100, 50)));
+    exitButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    connect(exitButton, &QPushButton::clicked, this, &MainWindow::close);
 }
 
 void MainWindow::createGameGrid() {
@@ -101,12 +109,14 @@ void MainWindow::createGameGrid() {
             label->setFrameStyle(QFrame::Panel + QFrame::Sunken);
             label->setAlignment(Qt::AlignCenter);
             label->setPixmap(*pixmap_empty);
-            label->setScaledContents(true);
+
+            //label->setScaledContents(true);
 
             connect(label, &ClickableLabel::clicked,
                     [this, x, y, label]{ clickedGamePiece(x, y); });
 
             grid_layout->addWidget(label, y, x);
+
         }
     }
 
@@ -120,6 +130,7 @@ void MainWindow::createGameGrid() {
 
     center = new QWidget(this);  // dummy wrapper widget
     center->setLayout(boxLayout);
+    
     setCentralWidget(center);
 }
 
@@ -163,8 +174,11 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
 
         if (score_white > score_black) {
             msgBox.setText(playername_white_ + " won this round!");
-        } else {
+        } 
+        else if (score_white < score_black){
             msgBox.setText(playername_black_ + " won this round!");
+        } else {
+            msgBox.setText("It's a draw!");
         }
         msgBox.setInformativeText(QString("%1 has %2 pieces. %3 has %4 pieces. Restart or close?")
                                           .arg(playername_white_).arg(score_white)
@@ -190,7 +204,15 @@ void MainWindow::updateGameGrid() {
             auto label = dynamic_cast<ClickableLabel*>(item->widget());
 
             Piece p = game->get_piece({x, game->board_size() - y - 1});
-            if (p == Piece::black) label->setPixmap(*pixmap_black);
+
+            //   alter zustand                     neur zustand
+            // if (label->getPixmap() == black && p == Piece::white)
+
+            if (p == Piece::black) {
+                // if label != black
+                // animate
+                label->setPixmap(*pixmap_black);
+            }
             else if (p == Piece::white) label->setPixmap(*pixmap_white);
             label->setScaledContents(true);
         }
@@ -213,6 +235,11 @@ void MainWindow::createActions() {
     exitAct->setStatusTip(tr("Exit the application"));
     connect(exitAct, &QAction::triggered, this, &MainWindow::close);
 
+    /*boardSize4 = createBoardSizeAction(4);
+    boardSize6 = createBoardSizeAction(6);
+    boardSize8 = createBoardSizeAction(8);
+    boardSize10 = createBoardSizeAction(10);
+    boardSize12 = createBoardSizeAction(12);*/
     boardSize4 = new QAction(tr("4x4"), this);
     boardSize4->setCheckable(true);
     boardSize4->setStatusTip(tr("Change board size to 4x4"));
@@ -250,6 +277,20 @@ void MainWindow::createActions() {
     aboutAct->setStatusTip(tr("Show the application's About box"));
     connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
 }
+
+//Ansatz um Boardsize zu refactorn
+/*QAction* MainWindow::createBoardSizeAction(unsigned int boardSizeNumber) {
+    const char* boardSizeString = boardSizeNumber +"x"+ boardSizeNumber;
+    QAction *boardSize = new QAction(tr(boardSizeString), this);
+    boardSize->setCheckable(true);
+    boardSize->setStatusTip(tr(boardSizeString));
+    connect(boardSize, &QAction::triggered, [this]{ changeBoardSize(boardSizeNumber); });
+    boardSizeGroup->addAction(boardSize);
+    if(boardSizeNumber==8) {
+        boardSize->setChecked(true);        
+    }
+    return boardSize;
+}*/
 
 void MainWindow::createMenus() {
     fileMenu = menuBar()->addMenu(tr("&File"));
