@@ -55,6 +55,11 @@ TEST_F(ReversiGameTest, ActivePlayerAtStart) {
     ASSERT_EQ(Piece::white, default_game.is_active());
 }
 
+TEST_F(ReversiGameTest, BlackPlayerStarts) {
+    ReversiGame game(Piece::black);
+    ASSERT_EQ(Piece::black, game.is_active());
+}
+
 TEST_F(ReversiGameTest, LongDefaultGame) {
     ReversiGame game;
     std::vector<Square> test_moves{{4,5}, {5,3}, {2,2}, {4,6}, {5,4}, {2,3}, {2,4},
