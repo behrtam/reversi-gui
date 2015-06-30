@@ -2,33 +2,33 @@
 
 #include "./mainwindow.h"
 
-#include <QWidget>
-#include <QWidgetItem>
-#include <QStatusBar>
+#include <QAbstractButton>
+#include <QAction>
 #include <QGridLayout>
 #include <QLabel>
-#include <QString>
+#include <QMenuBar>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QAbstractButton>
-#include <QMenuBar>
-#include <QAction>
+#include <QSettings>
 #include <QSound>
+#include <QStatusBar>
+#include <QString>
+#include <QWidget>
+#include <QWidgetItem>
 
-#include <sstream>
 #include <memory>
+#include <sstream>
 
 #include "./clickablelabel.h"
-#include "./reversi_game.h"
 #include "./piece.h"
 #include "./random_reversi_player.h"
+#include "./reversi_game.h"
 
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
         : QMainWindow(parent, flags), game(std::make_unique<ReversiGame>()) {
     setObjectName("MainWindow");
     setWindowTitle("Reversi Main Window");
-    resize(800, 650);
 
     createActions();
     createMenus();
@@ -43,6 +43,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     createSidebar();
     createGameGrid();
     updateGameGrid();
+
+    readSettings();
 
     statusBar()->showMessage(tr("Status Bar"));
 }
@@ -361,4 +363,22 @@ void MainWindow::createMsgBox() {
     resetMsgBox->setInformativeText("Do you want to reset your game to apply changes?");
     resetMsgBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
     resetMsgBox->setDefaultButton(QMessageBox::Ok);
+}
+
+void MainWindow::readSettings() {
+    QSettings settings;
+    QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
+    QSize size = settings.value("size", QSize(800, 650)).toSize();
+    resize(size);
+    move(pos);
+}
+
+void MainWindow::writeSettings() {
+    QSettings settings;
+    settings.setValue("pos", pos());
+    settings.setValue("size", size());
+}
+
+void MainWindow::closeEvent(QCloseEvent* event) {
+    writeSettings();
 }

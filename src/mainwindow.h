@@ -11,6 +11,7 @@
 #include <QAction>
 #include <QMessageBox>
 #include <QSound>
+#include <QCloseEvent>
 
 #include <memory>
 
@@ -75,6 +76,9 @@ class MainWindow : public QMainWindow {
         playername_white_ = playername;
     }
 
+ protected:
+    void closeEvent(QCloseEvent* event) Q_DECL_OVERRIDE;
+
  private:
     void createGameGrid();
     void updateGameGrid();
@@ -96,6 +100,9 @@ class MainWindow : public QMainWindow {
 
     void loadImages();
     void loadSounds();
+
+    void readSettings();
+    void writeSettings();
 };
 
 
