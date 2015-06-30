@@ -83,12 +83,13 @@ htm. (Punkte 5)
 (34) Beim Spiel Mensch gegen Computer soll die Spielstärke des Computers in mindestens 3 Stufen einstellbar sein.
 
 ### 1.4 Eigene Zusatz-Anforderungen (Punkte 5/15)
-(35) ...
 
-(36) ...
+(35) Es soll die Möglichkeit geben sich legale (erlaubte) Spielzüge anzeigen zu lassen. (Punkte 2+1)
 
-(37) ...
+(36) Es soll einen optionalen (Tutor-) Modus geben, der einen vor zu schlechten Zügen warnt. (Punkte 2+1)
 
-(38) ...
+(37) Die gesamten Spielgeräusche können an- und ausgeschaltet werden. (Punkte 2+1)
 
-(39) ...
+(38) Es soll Möglich sein mit der Startvariante Jacques and Sons das Spiel zu beginnen, statt mit einer Startaufstellung. In den ersten zwei Zügen setzen beide Spieler jeweils einen ihrer Steine auf die vier Mittelfelder. (Punkte 2+1)
+
+(39) Es soll möglich sein den letzten Spielzug zurückzunehmen. (Punkte 2+1)
