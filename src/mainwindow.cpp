@@ -23,6 +23,7 @@
 #include "./piece.h"
 #include "./random_reversi_player.h"
 #include "./reversi_game.h"
+#include "./fixed_ratio_widget.h"
 
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
@@ -127,7 +128,9 @@ void MainWindow::createGameGrid() {
     // which already has a layout
 
     boxLayout = new QHBoxLayout();
-    boxLayout->addItem(grid_layout);
+    FixedAspectRationWidget* dummy = new FixedAspectRationWidget;
+    dummy->setLayout(grid_layout);
+    boxLayout->addWidget(dummy);
     boxLayout->addWidget(sidebar);
 
     center = new QWidget(this);  // dummy wrapper widget
