@@ -4,7 +4,7 @@ We got them in german ... sorry. Strikethrough indicates that this is already do
 
 ## Anforderungen an Reversi
 
-**Status 15/100**
+**Status 26/100**
 
 - 5 Bonus Punkte bei Abgabe vor 21. Juli
 - 15 Punkte durch Dozent für Gesamteinschätzung
@@ -82,9 +82,9 @@ htm. (Punkte 5)
 
 (34) Beim Spiel Mensch gegen Computer soll die Spielstärke des Computers in mindestens 3 Stufen einstellbar sein.
 
-### 1.4 Eigene Zusatz-Anforderungen (Punkte 5/15)
+### 1.4 Eigene Zusatz-Anforderungen (Punkte 7/15)
 
-(35) Es soll die Möglichkeit geben sich legale (erlaubte) Spielzüge anzeigen zu lassen. (Punkte 2+1)
+~~(35) Es soll die Möglichkeit geben sich legale (erlaubte) Spielzüge anzeigen zu lassen.~~ **(Punkte 2+1)**
 
 (36) Es soll einen optionalen (Tutor-) Modus geben, der einen vor zu schlechten Zügen warnt. (Punkte 2+1)
 
