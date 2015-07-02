@@ -3,5 +3,7 @@
     <file>black.png</file>
     <file>white.png</file>
     <file>empty.png</file>
+    <file>white_light.png</file>
+    <file>black_light.png</file>
 </qresource>
 </RCC>
