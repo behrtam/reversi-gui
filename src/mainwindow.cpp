@@ -78,6 +78,14 @@ void MainWindow::loadImages() {
     pixmap_empty = new QPixmap();
     if (!pixmap_empty->load(":/resources/empty.png" ))
         qWarning("Failed to load empty.png");
+
+    pixmap_white_light = new QPixmap();
+    if (!pixmap_white_light->load(":/resources/white_light.png" ))
+        qWarning("Failed to load white_light.png");
+
+    pixmap_black_light = new QPixmap();
+    if (!pixmap_black_light->load(":/resources/black_light.png" ))
+        qWarning("Failed to load black_light.png");
 }
 
 void MainWindow::createSidebar() {
@@ -211,16 +219,22 @@ void MainWindow::updateGameGrid() {
 
             Piece p = game->get_piece({x, game->board_size() - y - 1});
 
-            //   alter zustand                     neur zustand
-            // if (label->getPixmap() == black && p == Piece::white)
 
             if (p == Piece::black) {
-                // if label != black
-                // animate
                 label->setPixmap(*pixmap_black);
             } else if (p == Piece::white) {
                 label->setPixmap(*pixmap_white);
+            } else {
+                label->setPixmap(*pixmap_empty);
             }
+            
+            if (game->is_valid_move({x, game->board_size() - y - 1})) {
+                if (game->is_active() == Piece::black)
+                    label->setPixmap(*pixmap_black_light);
+                else
+                    label->setPixmap(*pixmap_white_light);
+            }
+            
             label->setScaledContents(true);
         }
     }

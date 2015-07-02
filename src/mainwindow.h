@@ -1,7 +1,7 @@
 // Copyright 2015 Tammo Behrends
 
-#ifndef QTHALLOWORLD_MAINWINDOW_H
-#define QTHALLOWORLD_MAINWINDOW_H
+#ifndef REVERSI_MAINWINDOW_H
+#define REVERSI_MAINWINDOW_H
 
 
 #include <QMainWindow>
@@ -38,6 +38,8 @@ class MainWindow : public QMainWindow {
     QPixmap* pixmap_black;
     QPixmap* pixmap_white;
     QPixmap* pixmap_empty;
+    QPixmap* pixmap_white_light;
+    QPixmap* pixmap_black_light;
 
     QMenu *fileMenu;
     QMenu *settingsMenu;
@@ -113,4 +115,4 @@ class MainWindow : public QMainWindow {
 };
 
 
-#endif  // QTHALLOWORLD_MAINWINDOW_H
+#endif  // REVERSI_MAINWINDOW_H
