@@ -27,7 +27,10 @@
 
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
-        : QMainWindow(parent, flags), game(std::make_unique<ReversiGame>()) {
+        : QMainWindow(parent, flags),
+          game(std::make_unique<ReversiGame>()),
+          playername_white_("Ms. White"),
+          playername_black_("Mr. Black") {
     setObjectName("MainWindow");
     setWindowTitle("Reversi Main Window");
 
@@ -35,15 +38,14 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     createMenus();
     createMsgBox();
 
-    playername_black_ = "Mr. Black";
-    playername_white_ = "Ms. White";
-
     loadImages();
     loadSounds();
 
     createSidebar();
     createGameGrid();
     updateGameGrid();
+
+    black = nullptr;
 
     readSettings();
 
@@ -93,7 +95,6 @@ void MainWindow::createSidebar() {
         }
     });
 
-
     QPushButton *exitButton = new QPushButton("Exit", sidebar);
     exitButton->setGeometry(QRect(QPoint(50, 100), QSize(100, 50)));
     exitButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -113,13 +114,12 @@ void MainWindow::createGameGrid() {
             label->setAlignment(Qt::AlignCenter);
             label->setPixmap(*pixmap_empty);
 
-            //label->setScaledContents(true);
+            // label->setScaledContents(true);
 
             connect(label, &ClickableLabel::clicked,
                     [this, x, y, label]{ clickedGamePiece(x, y); });
 
             grid_layout->addWidget(label, y, x);
-
         }
     }
 
@@ -135,7 +135,7 @@ void MainWindow::createGameGrid() {
 
     center = new QWidget(this);  // dummy wrapper widget
     center->setLayout(boxLayout);
-    
+
     setCentralWidget(center);
 }
 
@@ -154,13 +154,15 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
         std::stringstream ss((game->is_active() == Piece::black ? "Black" : "White"));
         ss << " played on [" << x << "|" << y << "]. Now it's ";
         game->make_move({x, game->board_size() - y - 1});
-        tapped->play();
+        if (game->is_active() == Piece::white)
+            tapped->play();
+        else
+            timber->play();
         ss << (game->is_active() == Piece::black ? "Blacks" : "Whites") << " turn.";
         statusBar()->showMessage(QString::fromStdString(ss.str()));
 
-        if (game->possible_moves().size() > 0) {
-            RandomReversiPlayer player;
-            game->make_move(player.think(*game));
+        if (black != nullptr && game->possible_moves().size() > 0) {
+            game->make_move(black->think(*game));
             // timber->play();
         }
 
@@ -216,8 +218,9 @@ void MainWindow::updateGameGrid() {
                 // if label != black
                 // animate
                 label->setPixmap(*pixmap_black);
+            } else if (p == Piece::white) {
+                label->setPixmap(*pixmap_white);
             }
-            else if (p == Piece::white) label->setPixmap(*pixmap_white);
             label->setScaledContents(true);
         }
     }
@@ -278,6 +281,21 @@ void MainWindow::createActions() {
     boardSizeGroup->addAction(boardSize12);
     boardSize8->setChecked(true);
 
+    blackHuman = new QAction(tr("human"), this);
+    blackHuman->setCheckable(true);
+    blackHuman->setStatusTip(tr("Change black player to be human"));
+    connect(blackHuman, &QAction::triggered, [this]{ black = nullptr; });
+
+    blackRandom = new QAction(tr("random"), this);
+    blackRandom->setCheckable(true);
+    blackRandom->setStatusTip(tr("Change black player to be random"));
+    connect(blackRandom, &QAction::triggered, [this]{ black = new RandomReversiPlayer; });
+
+    blackPlayerGroup = new QActionGroup(this);
+    blackPlayerGroup->addAction(blackHuman);
+    blackPlayerGroup->addAction(blackRandom);
+    blackHuman->setChecked(true);
+
     startingPlayer = new QAction(tr("Black starts"), this);
     startingPlayer->setCheckable(true);
     connect(startingPlayer, &QAction::toggled, [this](bool checked){
@@ -293,8 +311,9 @@ void MainWindow::createActions() {
     connect(aboutAct, &QAction::triggered, this, &MainWindow::about);
 }
 
-//Ansatz um Boardsize zu refactorn
-/*QAction* MainWindow::createBoardSizeAction(unsigned int boardSizeNumber) {
+// Ansatz um Boardsize zu refactorn
+/*
+    QAction* MainWindow::createBoardSizeAction(unsigned int boardSizeNumber) {
     const char* boardSizeString = boardSizeNumber +"x"+ boardSizeNumber;
     QAction *boardSize = new QAction(tr(boardSizeString), this);
     boardSize->setCheckable(true);
@@ -325,6 +344,10 @@ void MainWindow::createMenus() {
     boardSizeMenu->addAction(boardSize10);
     boardSizeMenu->addAction(boardSize12);
 
+    blackPlayereMenu = settingsMenu->addMenu(tr("&Black player"));
+    blackPlayereMenu->addAction(blackHuman);
+    blackPlayereMenu->addAction(blackRandom);
+
     settingsMenu->addAction(startingPlayer);
 
     aboutMenu = menuBar()->addMenu(tr("&About"));
@@ -337,7 +360,7 @@ void MainWindow::createMenus() {
 void MainWindow::about() {
     QMessageBox::about(this, tr("About Reversi"),
                        tr("The <b>Reversi</b> game demonstrates how to write a simple"
-                          " board game in C++14 with a GUI using Qt 5."));
+                                  " board game in C++14 with a GUI using Qt 5."));
 }
 
 void MainWindow::changeBoardSize(unsigned int size) {

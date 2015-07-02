@@ -17,6 +17,7 @@
 
 #include "./reversi_game.h"
 #include "./clickablelabel.h"
+#include "./interface_reversi_player.h"
 
 
 class MainWindow : public QMainWindow {
@@ -30,6 +31,7 @@ class MainWindow : public QMainWindow {
     QHBoxLayout* boxLayout;
 
     std::unique_ptr<ReversiGame> game;
+    IReversiPlayer *black;
     QString playername_black_;
     QString playername_white_;
 
@@ -40,6 +42,7 @@ class MainWindow : public QMainWindow {
     QMenu *fileMenu;
     QMenu *settingsMenu;
     QMenu *boardSizeMenu;
+    QMenu *blackPlayereMenu;
     QMenu *aboutMenu;
 
     QAction *newGameAct;
@@ -52,6 +55,10 @@ class MainWindow : public QMainWindow {
     QAction *boardSize8;
     QAction *boardSize10;
     QAction *boardSize12;
+
+    QActionGroup *blackPlayerGroup;
+    QAction *blackHuman;
+    QAction *blackRandom;
 
     QAction *startingPlayer;
 
@@ -91,7 +98,7 @@ class MainWindow : public QMainWindow {
     void changeBoardSize(unsigned int size);
 
     void createActions();
-    //QAction* createBoardSizeAction(unsigned int boardSizeNumber);
+    // QAction* createBoardSizeAction(unsigned int boardSizeNumber);
     void createMenus();
     void createMsgBox();
 
