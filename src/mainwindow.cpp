@@ -158,6 +158,8 @@ void MainWindow::clearGameGrid() {
 }
 
 void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
+    QString bla = QString::fromStdString(game->board2string());
+    std::cout << bla.toStdString() << std::endl;
     if (game->is_valid_move({x, game->board_size() - y - 1})) {
         std::stringstream ss((game->is_active() == Piece::black ? "Black" : "White"));
         ss << " played on [" << x << "|" << y << "]. Now it's ";
@@ -227,14 +229,14 @@ void MainWindow::updateGameGrid() {
             } else {
                 label->setPixmap(*pixmap_empty);
             }
-            
+
             if (game->is_valid_move({x, game->board_size() - y - 1})) {
                 if (game->is_active() == Piece::black)
                     label->setPixmap(*pixmap_black_light);
                 else
                     label->setPixmap(*pixmap_white_light);
             }
-            
+
             label->setScaledContents(true);
         }
     }
@@ -256,6 +258,20 @@ void MainWindow::createActions() {
     exitAct->setShortcuts(QKeySequence::Quit);
     exitAct->setStatusTip(tr("Exit the application"));
     connect(exitAct, &QAction::triggered, this, &MainWindow::close);
+
+    loadAct = new QAction(tr("&Load game"), this);
+    loadAct->setShortcuts(QKeySequence::Open);
+    loadAct->setStatusTip(tr("Load the saved game"));
+    connect(loadAct, &QAction::triggered, this, &MainWindow::loadGame);
+
+    saveAct = new QAction(tr("&Save game"), this);
+    saveAct->setShortcuts(QKeySequence::Save);
+    saveAct->setStatusTip(tr("Save the current game"));
+    connect(saveAct, &QAction::triggered, this, &MainWindow::saveGame);
+
+    clearAct = new QAction(tr("&Clear saved game"), this);
+    clearAct->setStatusTip(tr("Clear the saved game"));
+    connect(clearAct, &QAction::triggered, this, &MainWindow::clearSaveGame);
 
     /*boardSize4 = createBoardSizeAction(4);
     boardSize6 = createBoardSizeAction(6);
@@ -343,8 +359,9 @@ void MainWindow::createActions() {
 void MainWindow::createMenus() {
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(newGameAct);
-    fileMenu->addAction("Open game");
-    fileMenu->addAction("Save game");
+    fileMenu->addAction(loadAct);
+    fileMenu->addAction(saveAct);
+    fileMenu->addAction(clearAct);
     fileMenu->addSeparator();
     fileMenu->addAction(exitAct);
 
@@ -421,4 +438,51 @@ void MainWindow::writeSettings() {
 
 void MainWindow::closeEvent(QCloseEvent* event) {
     writeSettings();
+
+    if (gameIsRunning()) {
+        QMessageBox msg;
+        msg.setText("Save running game.");
+        msg.setInformativeText("Do you want to save your running game?");
+        msg.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        msg.setDefaultButton(QMessageBox::No);
+        if (msg.exec() == QMessageBox::Yes)
+            saveGame();
+    }
+}
+
+void MainWindow::saveGame() {
+    QSettings settings;
+    settings.beginGroup("game state");
+
+    settings.setValue("board", QString::fromStdString(game->board2string()));
+    settings.setValue("moves", game->moves());
+    settings.setValue("active", as_integer(game->is_active()));
+    settings.setValue("playernameblack", playername_black_);
+    settings.setValue("playernamewhite", playername_white_);
+    // TODO: also save black modus (human, random, etc) maybe as enum
+
+    settings.endGroup();
+}
+
+void MainWindow::loadGame() {
+    QSettings settings;
+
+    if (settings.contains("game state/board")) {
+        settings.beginGroup("game state");
+        QString board = settings.value("board").toString();
+        unsigned int moves = settings.value("moves").toUInt();
+        Piece acitve = settings.value("active").toInt() == 1 ? Piece::black : Piece::white;
+        game = std::make_unique<ReversiGame>(board.toStdString(), acitve, moves);
+        playername_black_ = settings.value("playernameblack", "Mr. Black").toString();
+        playername_white_ = settings.value("playernamewhite", "Ms. White").toString();
+        settings.endGroup();
+        resetGame();
+    }
+}
+
+void MainWindow::clearSaveGame() {
+    QSettings settings;
+    settings.beginGroup("game state");
+    settings.remove("");
+    settings.endGroup();
 }

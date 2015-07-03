@@ -48,6 +48,9 @@ class MainWindow : public QMainWindow {
     QMenu *aboutMenu;
 
     QAction *newGameAct;
+    QAction *loadAct;
+    QAction *saveAct;
+    QAction *clearAct;
     QAction *exitAct;
     QAction *aboutAct;
 
@@ -112,6 +115,10 @@ class MainWindow : public QMainWindow {
 
     void readSettings();
     void writeSettings();
+
+    void saveGame();
+    void loadGame();
+    void clearSaveGame();
 };
 
 
