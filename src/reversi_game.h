@@ -7,6 +7,7 @@
 #include <vector>
 #include <utility>
 #include <iostream>
+#include <string>
 
 #include "./piece.h"
 #include "./square.h"
@@ -25,12 +26,14 @@ class ReversiGame {
     explicit ReversiGame(unsigned int size) : ReversiGame(size, Piece::white) { }
     explicit ReversiGame(Piece starting_player) : ReversiGame(8, starting_player) { }
     ReversiGame(unsigned int size, Piece starting_player);
-
+    ReversiGame(std::string board, Piece active_player, unsigned int moves);
     void display_board() const;
 
     unsigned int board_size() const {
         return size_;
     }
+
+    std::string board2string() const;
 
     std::pair<unsigned int, unsigned int> get_score() const;
 

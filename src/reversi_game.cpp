@@ -4,13 +4,15 @@
 #include <iostream>
 #include <utility>
 #include <stdexcept>
+#include <cmath>
+#include <string>
 
 #include "./reversi_game.h"
 #include "./utils.h"
 
 
 ReversiGame::ReversiGame(unsigned int size, Piece starting_player)
-        : moves_(0), size_(size), board_(size * size) {
+        : size_(size), board_(size * size), moves_(0) {
     if (size < 4 || size > 16 || size % 2 == 1)
         throw std::out_of_range{"ReversiGame(int)"};
 
@@ -20,6 +22,20 @@ ReversiGame::ReversiGame(unsigned int size, Piece starting_player)
     set_piece(size_ / 2, size_ / 2 - 1, Piece::white);
 
     active_ = starting_player;
+    set_all_moves();
+}
+
+ReversiGame::ReversiGame(std::string board, Piece active_player, unsigned int moves)
+        : ReversiGame(static_cast<unsigned int>(sqrt(board.size())), active_player) {
+    moves_ = moves;
+
+    for (unsigned int i = 0; i < board.size(); ++i) {
+        if (board[i] == '1') {
+            set_piece({i % size_, i / size_}, Piece::black);
+        } else if (board[i] == '2') {
+            set_piece({i % size_, i / size_}, Piece::white);
+        }
+    }
     set_all_moves();
 }
 
@@ -206,4 +222,15 @@ std::pair<unsigned int, unsigned int> ReversiGame::get_score() const {
             ++score.second;
     }
     return score;
+}
+
+std::string ReversiGame::board2string() const {
+    std::string board(size_ * size_, '0');
+    for (int i = 0; i < board_.size(); ++i) {
+        if (board_[i] == Piece::white)
+            board[i] = '2';
+        else if (board_[i] == Piece::black)
+            board[i] = '1';
+    }
+    return board;
 }
