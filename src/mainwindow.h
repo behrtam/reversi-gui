@@ -12,6 +12,8 @@
 #include <QMessageBox>
 #include <QSound>
 #include <QCloseEvent>
+#include <QSqlTableModel>
+#include <QDateTime>
 
 #include <memory>
 
@@ -45,6 +47,7 @@ class MainWindow : public QMainWindow {
     QMenu *settingsMenu;
     QMenu *boardSizeMenu;
     QMenu *blackPlayereMenu;
+    QMenu *highScoreMenu;
     QMenu *aboutMenu;
 
     QAction *newGameAct;
@@ -67,7 +70,13 @@ class MainWindow : public QMainWindow {
 
     QAction *startingPlayer;
 
+    QAction *scoreClearAct;
+
     QMessageBox* resetMsgBox;
+    QSqlTableModel *model;
+
+    QDateTime game_start;
+    QDateTime game_end;
 
     QSound* tapped;
     QSound* timber;
@@ -119,6 +128,9 @@ class MainWindow : public QMainWindow {
     void saveGame();
     void loadGame();
     void clearSaveGame();
+
+    void createHighscoreModel();
+    void addHighscore();
 };
 
 

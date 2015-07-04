@@ -15,6 +15,8 @@
 #include <QString>
 #include <QWidget>
 #include <QWidgetItem>
+#include <QSqlRecord>
+#include <QSqlQuery>
 
 #include <memory>
 #include <sstream>
@@ -24,6 +26,8 @@
 #include "./random_reversi_player.h"
 #include "./reversi_game.h"
 #include "./fixed_ratio_widget.h"
+#include "./highscore_columns.h"
+#include "./utils.h"
 
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
@@ -48,6 +52,8 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     black = nullptr;
 
     readSettings();
+
+    createHighscoreModel();
 
     statusBar()->showMessage(tr("Status Bar"));
 }
@@ -158,11 +164,13 @@ void MainWindow::clearGameGrid() {
 }
 
 void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
-    QString bla = QString::fromStdString(game->board2string());
-    std::cout << bla.toStdString() << std::endl;
     if (game->is_valid_move({x, game->board_size() - y - 1})) {
         std::stringstream ss((game->is_active() == Piece::black ? "Black" : "White"));
         ss << " played on [" << x << "|" << y << "]. Now it's ";
+
+        if (game->moves() == 0)
+            game_start = QDateTime::currentDateTime();
+
         game->make_move({x, game->board_size() - y - 1});
         if (game->is_active() == Piece::white)
             tapped->play();
@@ -181,10 +189,13 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
         xylo->play();
     }
     if  (game->possible_moves().size() == 0) {
+        game_end = QDateTime::currentDateTime();
         unsigned int score_white, score_black;
         std::tie(score_white, score_black) = game->get_score();
 
         statusBar()->showMessage("The Game is over!");
+
+        addHighscore();
 
         QMessageBox msgBox;
         msgBox.setWindowTitle("Game is over!");
@@ -272,6 +283,16 @@ void MainWindow::createActions() {
     clearAct = new QAction(tr("&Clear saved game"), this);
     clearAct->setStatusTip(tr("Clear the saved game"));
     connect(clearAct, &QAction::triggered, this, &MainWindow::clearSaveGame);
+
+    scoreClearAct = new QAction(tr("&Clear high score"), this);
+    scoreClearAct->setStatusTip(tr("Delete all the saved scores"));
+    connect(scoreClearAct, &QAction::triggered, [this] {
+        // model->removeRows(0, 2);
+        // model->submit();
+        QSqlQuery query;
+        query.exec("DELETE FROM scores;");
+        model->select();
+    });
 
     /*boardSize4 = createBoardSizeAction(4);
     boardSize6 = createBoardSizeAction(6);
@@ -381,6 +402,10 @@ void MainWindow::createMenus() {
 
     settingsMenu->addAction(startingPlayer);
 
+    highScoreMenu = menuBar()->addMenu(tr("&Highscore"));
+    highScoreMenu->addAction(scoreDialogAct);
+    highScoreMenu->addAction(scoreClearAct);
+
     aboutMenu = menuBar()->addMenu(tr("&About"));
     aboutMenu->addAction(aboutAct);
 
@@ -437,8 +462,6 @@ void MainWindow::writeSettings() {
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {
-    writeSettings();
-
     if (gameIsRunning()) {
         QMessageBox msg;
         msg.setText("Save running game.");
@@ -448,6 +471,11 @@ void MainWindow::closeEvent(QCloseEvent* event) {
         if (msg.exec() == QMessageBox::Yes)
             saveGame();
     }
+
+    // write cached data from model to the database
+    model->submitAll();
+
+    writeSettings();
 }
 
 void MainWindow::saveGame() {
@@ -485,4 +513,26 @@ void MainWindow::clearSaveGame() {
     settings.beginGroup("game state");
     settings.remove("");
     settings.endGroup();
+}
+
+void MainWindow::createHighscoreModel() {
+    model = new QSqlTableModel(this);
+    model->setTable("scores");
+    model->select();
+}
+
+void MainWindow::addHighscore() {
+    const QString DFORMAT = "yyyy-MM-dd HH:mm:ss";
+    QSqlRecord record = model->record();
+    record.setValue(as_integer(Columns::start), game_start.toString(DFORMAT));
+    record.setValue(as_integer(Columns::end), game_end.toString(DFORMAT));
+    record.setValue(as_integer(Columns::boardsize), game->board_size());
+    record.setValue(as_integer(Columns::moves), game->moves());
+    unsigned int score_white, score_black;
+    std::tie(score_white, score_black) = game->get_score();
+    record.setValue(as_integer(Columns::blackname), playername_black_);
+    record.setValue(as_integer(Columns::blackstones), score_black);
+    record.setValue(as_integer(Columns::whitename), playername_white_);
+    record.setValue(as_integer(Columns::whitestones), score_white);
+    model->insertRecord(-1, record);
 }
