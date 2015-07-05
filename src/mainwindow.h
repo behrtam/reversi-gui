@@ -70,6 +70,7 @@ class MainWindow : public QMainWindow {
 
     QAction *startingPlayer;
 
+    QAction *scoreDialogAct;
     QAction *scoreClearAct;
 
     QMessageBox* resetMsgBox;

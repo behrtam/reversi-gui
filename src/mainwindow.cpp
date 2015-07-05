@@ -28,6 +28,7 @@
 #include "./fixed_ratio_widget.h"
 #include "./highscore_columns.h"
 #include "./utils.h"
+#include "./highscore_dialog.h"
 
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
@@ -283,6 +284,13 @@ void MainWindow::createActions() {
     clearAct = new QAction(tr("&Clear saved game"), this);
     clearAct->setStatusTip(tr("Clear the saved game"));
     connect(clearAct, &QAction::triggered, this, &MainWindow::clearSaveGame);
+
+    scoreDialogAct = new QAction(tr("&Show high score"), this);
+    scoreDialogAct->setStatusTip(tr("Shows the saved scores"));
+    connect(scoreDialogAct, &QAction::triggered, [this] {
+        HighScoreDialog dialog(model);
+        dialog.exec();
+    });
 
     scoreClearAct = new QAction(tr("&Clear high score"), this);
     scoreClearAct->setStatusTip(tr("Delete all the saved scores"));

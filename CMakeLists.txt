@@ -57,14 +57,30 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
 find_package(Qt5Widgets)
 find_package(Qt5Multimedia)
+find_package(Qt5Sql)
 
 set(RESOURCE ${CMAKE_SOURCE_DIR}/images/images.qrc ${CMAKE_SOURCE_DIR}/sounds/sounds.qrc)
 qt5_add_resources(RESOURCE_ADDED ${RESOURCE})
 
-set(SOURCE_FILES src/main.cpp src/mainwindow.cpp src/reversi_game.cpp src/clickablelabel.cpp src/random_reversi_player.cpp)
-set(HEADER_FILES src/direction.h src/piece.h src/reversi_game.h src/square.h src/utils.h src/mainwindow.h src/clickablelabel.h src/random_reversi_player.h src/interface_reversi_player.h)
+set(SOURCE_FILES
+src/main.cpp
+src/mainwindow.cpp
+src/reversi_game.cpp
+src/clickablelabel.cpp
+src/random_reversi_player.cpp
+src/highscore_dialog.cpp)
+set(HEADER_FILES
+src/direction.h
+src/piece.h
+src/reversi_game.h
+src/square.h src/utils.h
+src/mainwindow.h
+src/clickablelabel.h
+src/random_reversi_player.h
+src/interface_reversi_player.h
+src/highscore_dialog.h)
 add_executable(reversi ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCE_ADDED})
-target_link_libraries(reversi Qt5::Widgets Qt5::Multimedia)
+target_link_libraries(reversi Qt5::Widgets Qt5::Multimedia Qt5::Sql)
 
 # gtest stuff
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
