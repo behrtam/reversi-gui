@@ -4,7 +4,7 @@ We got them in german ... sorry. Strikethrough indicates that this is already do
 
 ## Anforderungen an Reversi
 
-**Status 27/100**
+**Status 29/100**
 
 - 5 Bonus Punkte bei Abgabe vor 21. Juli
 - 15 Punkte durch Dozent für Gesamteinschätzung
@@ -37,7 +37,7 @@ We got them in german ... sorry. Strikethrough indicates that this is already do
 
 (12) Das Programm lässt sich einfach für eine Linux-Plattform übersetzen und die Tests laufen dabei automatisch ab. Build-Artefakte werden sowohl für für Linux und für eine weitere Plattform wie Windows oder OS X erzeugt und optional für eine mobilen Plattform. Das Bauen der Artefakte wird über ein Containerlösung wie Docker realisiert. (Punkte 4)
 
-### 1.3 Projektspezifische Anforderungen (Punkte 5/30)
+### 1.3 Projektspezifische Anforderungen (Punkte 7/30)
 
 ~~(13) Es können zwei Menschen gegeneinander oder ein Mensch gegen den Computer spielen.~~ **(Punkte 1)**
 
@@ -57,9 +57,9 @@ We got them in german ... sorry. Strikethrough indicates that this is already do
 
 (21) Die Anwendung erkennt eine Gewinnposition und ein Unentschieden, spielt dazu geeignete Sounds ab und zeigt das Resultat in einer Animation an. (Punkte 1)
 
-(22) Alle Spielergebnisse sollen in einer lokalen Datenbank (SQLite) abgespeichert werden und alle wichtigen Informationen über die gespielten Spiele enthalten. (Punkte 1)
+~~(22) Alle Spielergebnisse sollen in einer lokalen Datenbank (SQLite) abgespeichert werden und alle wichtigen Informationen über die gespielten Spiele enthalten.~~ **(Punkte 1)**
 
-(23) Die Spielergebnisse sollen in der GUI abrufbar sein (Highscore). (Punkte 1)
+~~(23) Die Spielergebnisse sollen in der GUI abrufbar sein (Highscore).~~ **(Punkte 1)**
 
 (24) Die Spielergebnisse (Highscore) sollen ausgedruckt werden können oder auf anderem Wege der Welt bekannt gemacht werden können. (Punkte 1)
 
