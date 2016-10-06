@@ -15,6 +15,8 @@
 #include <QSqlTableModel>
 #include <QDateTime>
 
+#include <QTranslator>
+
 #include <memory>
 
 #include "./reversi_game.h"
@@ -47,6 +49,7 @@ class MainWindow : public QMainWindow {
     QMenu *settingsMenu;
     QMenu *boardSizeMenu;
     QMenu *blackPlayereMenu;
+    QMenu *langMenu;
     QMenu *highScoreMenu;
     QMenu *aboutMenu;
 
@@ -67,6 +70,12 @@ class MainWindow : public QMainWindow {
     QActionGroup *blackPlayerGroup;
     QAction *blackHuman;
     QAction *blackRandom;
+
+    QActionGroup *langGroup;
+    QAction *langEN;
+    QAction *langDE;
+
+    QTranslator *translator;
 
     QAction *startingPlayer;
 
@@ -100,8 +109,11 @@ class MainWindow : public QMainWindow {
 
  protected:
     void closeEvent(QCloseEvent* event) Q_DECL_OVERRIDE;
+    void changeEvent(QEvent *);
 
  private:
+    void switchLanguage();
+
     void createGameGrid();
     void updateGameGrid();
     void clearGameGrid();
@@ -132,6 +144,8 @@ class MainWindow : public QMainWindow {
 
     void createHighscoreModel();
     void addHighscore();
+
+    void retranslateUi();
 };
 
 

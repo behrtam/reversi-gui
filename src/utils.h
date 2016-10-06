@@ -3,6 +3,7 @@
 #ifndef REVERSI_UTILS_H
 #define REVERSI_UTILS_H
 
+
 #include <algorithm>
 #include <type_traits>
 

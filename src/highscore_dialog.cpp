@@ -8,14 +8,14 @@
 #include "./utils.h"
 
 HighScoreDialog::HighScoreDialog(QSqlTableModel* model, QWidget* parent) : QDialog(parent) {
-    model->setHeaderData(as_integer(Columns::start), Qt::Horizontal, tr("Startdatum"));
-    model->setHeaderData(as_integer(Columns::end), Qt::Horizontal, tr("Enddatum"));
-    model->setHeaderData(as_integer(Columns::boardsize), Qt::Horizontal, tr("Brett"));
-    model->setHeaderData(as_integer(Columns::moves), Qt::Horizontal, tr("Züge"));
-    model->setHeaderData(as_integer(Columns::blackname), Qt::Horizontal, tr("Schwarz"));
-    model->setHeaderData(as_integer(Columns::blackstones), Qt::Horizontal, tr("Steine"));
-    model->setHeaderData(as_integer(Columns::whitename), Qt::Horizontal, tr("Weiß"));
-    model->setHeaderData(as_integer(Columns::whitestones), Qt::Horizontal, tr("Steine"));
+    model->setHeaderData(as_integer(Columns::start), Qt::Horizontal, tr("Start date"));
+    model->setHeaderData(as_integer(Columns::end), Qt::Horizontal, tr("End date"));
+    model->setHeaderData(as_integer(Columns::boardsize), Qt::Horizontal, tr("Board"));
+    model->setHeaderData(as_integer(Columns::moves), Qt::Horizontal, tr("Move"));
+    model->setHeaderData(as_integer(Columns::blackname), Qt::Horizontal, tr("Black"));
+    model->setHeaderData(as_integer(Columns::blackstones), Qt::Horizontal, tr("Stone"));
+    model->setHeaderData(as_integer(Columns::whitename), Qt::Horizontal, tr("White"));
+    model->setHeaderData(as_integer(Columns::whitestones), Qt::Horizontal, tr("Stone"));
 
     view = new QTableView;
     view->setModel(model);

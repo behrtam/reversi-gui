@@ -11,6 +11,7 @@
 #include "./utils.h"
 #include "./square.h"
 
+
 enum class Direction { up, up_left, up_right, down, down_right, down_left, left, right };
 
 inline std::ostream &operator<<(std::ostream &os, const Direction &d) {

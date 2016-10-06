@@ -8,8 +8,10 @@
 
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
-    app.setOrganizationName("HTW MM15 QtProject");
+
+    app.setOrganizationName("HTW MM16 QtProject");
     app.setApplicationName("Reversi GUI");
+
 
     if (!createConnection())
         return 1;

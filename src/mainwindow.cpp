@@ -18,6 +18,8 @@
 #include <QSqlRecord>
 #include <QSqlQuery>
 
+#include <QApplication>
+
 #include <memory>
 #include <sstream>
 
@@ -37,7 +39,6 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
           playername_white_("Ms. White"),
           playername_black_("Mr. Black") {
     setObjectName("MainWindow");
-    setWindowTitle("Reversi Main Window");
 
     createActions();
     createMenus();
@@ -56,7 +57,53 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 
     createHighscoreModel();
 
+    translator = new QTranslator();
+    if (!translator->load("test_de", ":/resources")) {
+        qWarning("Failed to load de language");
+    }
+
+    retranslateUi();
+
     statusBar()->showMessage(tr("Status Bar"));
+}
+
+
+void MainWindow::switchLanguage() {
+
+    if (langEN->isChecked())
+        qWarning("is checked");
+
+    if (langEN->isChecked()) {
+        qApp->removeTranslator(translator);
+    } else {
+        qApp->installTranslator(translator);
+    }
+}
+
+void MainWindow::changeEvent(QEvent *e) {
+    if (e->type() == QEvent::LanguageChange) {
+        retranslateUi();
+    } else {
+        QMainWindow::changeEvent(e);
+    }
+}
+
+void MainWindow::retranslateUi() {
+    // TODO: all the others
+    setWindowTitle(tr("Reversi Main Window"));
+    fileMenu->setTitle(tr("&File"));
+    settingsMenu->setTitle(tr("&Settings"));
+    boardSizeMenu->setTitle(tr("&Board size"));
+    blackPlayereMenu->setTitle(tr("&Black player"));
+    langMenu->setTitle(tr("&Languages"));
+    highScoreMenu->setTitle(tr("&High score"));
+    aboutMenu->setTitle(tr("&About"));
+
+    newGameAct->setText(tr("&New game"));
+    //exitAct->setText(tr("E&xit"));
+    //loadAct->setText(tr("&Load game"));
+    //saveAct->setText(tr("&Save game"));
+
 }
 
 void MainWindow::loadSounds() {
@@ -100,7 +147,8 @@ void MainWindow::createSidebar() {
     sidebar->setStyleSheet("background-color:gray;");
     sidebar->setMinimumWidth(200);
 
-    QPushButton *restartButton = new QPushButton("Restart", sidebar);
+
+    QPushButton *restartButton = new QPushButton("Restart X", sidebar);
     restartButton->setGeometry(QRect(QPoint(50, 50), QSize(100, 50)));
     restartButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     connect(restartButton, &QPushButton::clicked, [this]{
@@ -194,59 +242,59 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
         unsigned int score_white, score_black;
         std::tie(score_white, score_black) = game->get_score();
 
-        statusBar()->showMessage("The Game is over!");
+        statusBar()->showMessage(tr("The Game is over!"));
 
         addHighscore();
 
-        QMessageBox msgBox;
-        msgBox.setWindowTitle("Game is over!");
+                QMessageBox msgBox;
+                msgBox.setWindowTitle(tr("Game is over!"));
 
-        if (score_white > score_black) {
-            msgBox.setText(playername_white_ + " won this round!");
-        } else if (score_white < score_black) {
-            msgBox.setText(playername_black_ + " won this round!");
-        } else {
-            msgBox.setText("It's a draw!");
-        }
-        msgBox.setInformativeText(QString("%1 has %2 pieces. %3 has %4 pieces. Restart or close?")
-                                          .arg(playername_white_).arg(score_white)
-                                          .arg(playername_black_).arg(score_black));
-        QPushButton *connectButton = msgBox.addButton(tr("Restart"), QMessageBox::ActionRole);
-        QPushButton *closeButton = msgBox.addButton(QMessageBox::Close);
+                if (score_white > score_black) {
+                    msgBox.setText(playername_white_ + " won this round!");
+                } else if (score_white < score_black) {
+                    msgBox.setText(playername_black_ + " won this round!");
+                } else {
+                    msgBox.setText("It's a draw!");
+                }
+                msgBox.setInformativeText(QString("%1 has %2 pieces. %3 has %4 pieces. Restart or close?")
+                                                  .arg(playername_white_).arg(score_white)
+                                                  .arg(playername_black_).arg(score_black));
+                QPushButton *connectButton = msgBox.addButton(tr("Restart"), QMessageBox::ActionRole);
+                QPushButton *closeButton = msgBox.addButton(QMessageBox::Close);
 
-        msgBox.exec();
+                msgBox.exec();
 
-        if (qobject_cast<QPushButton *>(msgBox.clickedButton()) == connectButton) {
-            game = std::make_unique<ReversiGame>(game->board_size());
-            resetGame();
-        } else if (qobject_cast<QPushButton *>(msgBox.clickedButton()) == closeButton) {
-            this->close();
-        }
-    }
-}
-
-void MainWindow::updateGameGrid() {
-    for (unsigned int x = 0; x < grid_layout->columnCount(); ++x) {
-        for (unsigned int y = 0; y < grid_layout->rowCount(); ++y) {
-            QLayoutItem *item = grid_layout->itemAtPosition(y, x);
-            auto label = dynamic_cast<ClickableLabel*>(item->widget());
-
-            Piece p = game->get_piece({x, game->board_size() - y - 1});
-
-
-            if (p == Piece::black) {
-                label->setPixmap(*pixmap_black);
-            } else if (p == Piece::white) {
-                label->setPixmap(*pixmap_white);
-            } else {
-                label->setPixmap(*pixmap_empty);
+                if (qobject_cast<QPushButton *>(msgBox.clickedButton()) == connectButton) {
+                    game = std::make_unique<ReversiGame>(game->board_size());
+                    resetGame();
+                } else if (qobject_cast<QPushButton *>(msgBox.clickedButton()) == closeButton) {
+                    this->close();
+                }
             }
+        }
 
-            if (game->is_valid_move({x, game->board_size() - y - 1})) {
-                if (game->is_active() == Piece::black)
-                    label->setPixmap(*pixmap_black_light);
-                else
-                    label->setPixmap(*pixmap_white_light);
+        void MainWindow::updateGameGrid() {
+            for (unsigned int x = 0; x < grid_layout->columnCount(); ++x) {
+                for (unsigned int y = 0; y < grid_layout->rowCount(); ++y) {
+                    QLayoutItem *item = grid_layout->itemAtPosition(y, x);
+                    auto label = dynamic_cast<ClickableLabel*>(item->widget());
+
+                    Piece p = game->get_piece({x, game->board_size() - y - 1});
+
+
+                    if (p == Piece::black) {
+                        label->setPixmap(*pixmap_black);
+                    } else if (p == Piece::white) {
+                        label->setPixmap(*pixmap_white);
+                    } else {
+                        label->setPixmap(*pixmap_empty);
+                    }
+
+                    if (game->is_valid_move({x, game->board_size() - y - 1})) {
+                        if (game->is_active() == Piece::black)
+                            label->setPixmap(*pixmap_black_light);
+                        else
+                            label->setPixmap(*pixmap_white_light);
             }
 
             label->setScaledContents(true);
@@ -257,7 +305,7 @@ void MainWindow::updateGameGrid() {
 void MainWindow::createActions() {
     newGameAct = new QAction(tr("&New game"), this);
     newGameAct->setShortcuts(QKeySequence::New);
-    newGameAct->setStatusTip(tr("Create a new game"));
+    //newGameAct->setStatusTip(tr("Create a new game"));
     connect(newGameAct, &QAction::triggered, [this]{
         if (!gameIsRunning() || (resetMsgBox->exec() == QMessageBox::Ok)) {
             Piece starter = startingPlayer->isChecked() ? Piece::black : Piece::white;
@@ -268,7 +316,7 @@ void MainWindow::createActions() {
 
     exitAct = new QAction(tr("E&xit"), this);
     exitAct->setShortcuts(QKeySequence::Quit);
-    exitAct->setStatusTip(tr("Exit the application"));
+    // exitAct->setStatusTip(tr("Exit the application"));
     connect(exitAct, &QAction::triggered, this, &MainWindow::close);
 
     loadAct = new QAction(tr("&Load game"), this);
@@ -355,6 +403,22 @@ void MainWindow::createActions() {
     blackPlayerGroup->addAction(blackRandom);
     blackHuman->setChecked(true);
 
+
+    langEN = new QAction(tr("en"), this);
+    langEN->setCheckable(true);
+    langEN->setStatusTip(tr("Change language to EN"));
+    connect(langEN, &QAction::triggered, this, &MainWindow::switchLanguage);
+
+    langDE = new QAction(tr("de"), this);
+    langDE->setCheckable(true);
+    langDE->setStatusTip(tr("Change language to DE"));
+    connect(langDE, &QAction::triggered, this, &MainWindow::switchLanguage);
+
+    langGroup = new QActionGroup(this);
+    langGroup->addAction(langEN);
+    langGroup->addAction(langDE);
+    langEN->setChecked(true);
+
     startingPlayer = new QAction(tr("Black starts"), this);
     startingPlayer->setCheckable(true);
     connect(startingPlayer, &QAction::toggled, [this](bool checked){
@@ -387,6 +451,7 @@ void MainWindow::createActions() {
 
 void MainWindow::createMenus() {
     fileMenu = menuBar()->addMenu(tr("&File"));
+    //fileMenu = new QMenu(this);
     fileMenu->addAction(newGameAct);
     fileMenu->addAction(loadAct);
     fileMenu->addAction(saveAct);
@@ -408,9 +473,13 @@ void MainWindow::createMenus() {
     blackPlayereMenu->addAction(blackHuman);
     blackPlayereMenu->addAction(blackRandom);
 
+    langMenu = settingsMenu->addMenu(tr("&Languages"));
+    langMenu->addAction(langEN);
+    langMenu->addAction(langDE);
+
     settingsMenu->addAction(startingPlayer);
 
-    highScoreMenu = menuBar()->addMenu(tr("&Highscore"));
+    highScoreMenu = menuBar()->addMenu(tr("&High score"));
     highScoreMenu->addAction(scoreDialogAct);
     highScoreMenu->addAction(scoreClearAct);
 
