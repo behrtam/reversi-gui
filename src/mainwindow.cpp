@@ -157,15 +157,18 @@ void MainWindow::createSidebar() {
     sidebar->setMinimumWidth(200);
 
 
-    QPushButton *restartButton = new QPushButton("Restart X", sidebar);
+    QPushButton *restartButton = new QPushButton("Undo", sidebar);
     restartButton->setGeometry(QRect(QPoint(50, 50), QSize(100, 50)));
     restartButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    connect(restartButton, &QPushButton::clicked, [this]{
+
+    connect(restartButton, &QPushButton::clicked, this, &MainWindow::undo);
+
+    /*connect(restartButton, &QPushButton::clicked, [this]{
         if (resetMsgBox->exec() == QMessageBox::Ok) {
             game = std::make_unique<ReversiGame>(game->board_size());
             resetGame();
         }
-    });
+    });*/
 
     QPushButton *exitButton = new QPushButton("Exit", sidebar);
     exitButton->setGeometry(QRect(QPoint(50, 100), QSize(100, 50)));
@@ -229,7 +232,9 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
         if (game->moves() == 0)
             game_start = QDateTime::currentDateTime();
 
+        undoState = game->board2string();
         game->make_move({x, game->board_size() - y - 1});
+
         if (game->is_active() == Piece::white)
             playSound(tapped);
         else
@@ -239,6 +244,7 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
 
         if (black != nullptr && game->possible_moves().size() > 0) {
             game->make_move(black->think(*game));
+            undoState = "";  // no undo for computer moves
             // timber->play();
         }
 
@@ -574,6 +580,8 @@ void MainWindow::closeEvent(QCloseEvent* event) {
     writeSettings();
 }
 
+
+
 void MainWindow::saveGame() {
     QSettings settings;
     settings.beginGroup("game state");
@@ -600,6 +608,17 @@ void MainWindow::loadGame() {
         playername_black_ = settings.value("playernameblack", "Mr. Black").toString();
         playername_white_ = settings.value("playernamewhite", "Ms. White").toString();
         settings.endGroup();
+        resetGame();
+    }
+}
+
+void MainWindow::undo() {
+    if (undoState.empty()) {
+        qWarning("no undo state there");
+    } else {
+        qWarning("let's undo");
+        game = std::make_unique<ReversiGame>(undoState, !game->is_active(),  game->moves() - 1);
+        undoState = "";
         resetGame();
     }
 }

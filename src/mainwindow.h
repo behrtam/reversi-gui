@@ -18,6 +18,7 @@
 #include <QTranslator>
 
 #include <memory>
+#include <string>
 
 #include "./reversi_game.h"
 #include "./clickablelabel.h"
@@ -78,6 +79,7 @@ class MainWindow : public QMainWindow {
     QAction *soundOption;
 
     QTranslator *translator;
+    std::string undoState;
 
     QAction *startingPlayer;
 
@@ -145,6 +147,10 @@ class MainWindow : public QMainWindow {
     void saveGame();
     void loadGame();
     void clearSaveGame();
+
+    void saveState();
+    void clearState();
+    void undo();
 
     void createHighscoreModel();
     void addHighscore();
