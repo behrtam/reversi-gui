@@ -118,6 +118,14 @@ void MainWindow::loadSounds() {
     xylo = new QSound(":/resources/xylo.wav");
     if (!QFile::exists(":/resources/xylo.wav"))
         qWarning("Failed to load xylo.wav");
+
+    cheering = new QSound(":/resources/cheering.wav");
+    if (!QFile::exists(":/resources/cheering.wav"))
+        qWarning("Failed to load cheering.wav");
+
+    trombone = new QSound(":/resources/trombone.wav");
+    if (!QFile::exists(":/resources/trombone.wav"))
+        qWarning("Failed to load trombone.wav");
 }
 
 void MainWindow::loadImages() {
@@ -251,8 +259,14 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
 
                 if (score_white > score_black) {
                     msgBox.setText(playername_white_ + " won this round!");
+                    cheering->play();
                 } else if (score_white < score_black) {
                     msgBox.setText(playername_black_ + " won this round!");
+                    if (blackHuman->isChecked()) {
+                        cheering->play();
+                    } else {
+                        trombone->play();
+                    }
                 } else {
                     msgBox.setText("It's a draw!");
                 }
