@@ -51,3 +51,6 @@ Makefile*
 *.qmlproject.user.*
 
 *.depends
+
+# Doxygen
+/doc
