@@ -1,0 +1,22 @@
+# Die Dokumentation befindet sich im Unterverzeichnis doc.
+PROJECT_NAME = "Reversi"
+OUTPUT_DIRECTORY = doc
+
+GENERATE_LATEX = NO
+
+# Basis für die Dokumentation ist das aktuelle Verzeichnis.
+INPUT = src/reversi_game.cpp src/reversi_game.h
+
+# Alle in Frage kommenden Dateien werden untersucht.
+EXTRACT_ALL = YES
+EXTRACT_PRIVATE  = YES
+
+# Das Werkzeug dot wird zum Zeichnen der Aufrufhierarchie benutzt.
+# Es gehört zur Visualisierungssoftware Graphviz.
+# Siehe: http://www.graphviz.org/
+HAVE_DOT = YES
+
+# Die Aufrufhierarchie wird erstellt.
+CALL_GRAPH = YES
+
+SEARCHENGINE = NO
