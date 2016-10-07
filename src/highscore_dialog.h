@@ -18,6 +18,8 @@ class HighScoreDialog : public QDialog {
  private:
     QTableView *view;
     QDialogButtonBox *buttonBox;
+
+    void printHighscore();
 };
 
 

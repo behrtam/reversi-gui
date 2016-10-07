@@ -9,6 +9,9 @@ set(CMAKE_AUTOMOC ON)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 
+set("QMAKE_MAC_SDK.macosx.version = 10.11")
+
+find_package(QT5PrintSupport REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 find_package(Qt5Multimedia REQUIRED)
 find_package(Qt5Sql REQUIRED)
@@ -37,7 +40,7 @@ set(HEADER_FILES
 
 add_executable(reversi ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCE_ADDED})
 
-target_link_libraries(reversi Qt5::Widgets Qt5::Multimedia Qt5::Sql)
+target_link_libraries(reversi Qt5::Widgets Qt5::Multimedia Qt5::Sql Qt5::PrintSupport)
 
 
 # gtest stuff
@@ -51,3 +54,28 @@ target_link_libraries(reversi_tests /usr/local/lib/libgtest.a /usr/local/lib/lib
 enable_testing()
 add_test(reversitest reversi_tests)
 
+find_package(Doxygen)
+
+if (DOXYGEN_FOUND)
+
+    set(DOXYGEN_INPUT Doxygen)
+    set(DOXYGEN_OUTPUT doc)
+
+    add_custom_command(
+        OUTPUT ${DOXYGEN_OUTPUT}
+        COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
+        COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT}
+        COMMAND ${CMAKE_COMMAND} -E echo "Done."
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        DEPENDS ${DOXYGEN_INPUT}
+    )
+
+    add_custom_target(apidoc ALL DEPENDS ${DOXYGEN_OUTPUT})
+
+    add_custom_target(apidoc_forced
+        COMMAND ${CMAKE_COMMAND} -E echo_append "Building API Documentation..."
+        COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_INPUT}
+        COMMAND ${CMAKE_COMMAND} -E echo "Done."
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+
+endif (DOXYGEN_FOUND)
