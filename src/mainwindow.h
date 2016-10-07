@@ -75,6 +75,8 @@ class MainWindow : public QMainWindow {
     QAction *langEN;
     QAction *langDE;
 
+    QAction *soundOption;
+
     QTranslator *translator;
 
     QAction *startingPlayer;
@@ -91,6 +93,8 @@ class MainWindow : public QMainWindow {
     QSound* tapped;
     QSound* timber;
     QSound* xylo;
+    QSound* cheering;
+    QSound* trombone;
 
  public:
     explicit MainWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0);
@@ -109,7 +113,7 @@ class MainWindow : public QMainWindow {
 
  protected:
     void closeEvent(QCloseEvent* event) Q_DECL_OVERRIDE;
-    void changeEvent(QEvent *);
+    void changeEvent(QEvent *) override;
 
  private:
     void switchLanguage();
@@ -144,6 +148,8 @@ class MainWindow : public QMainWindow {
 
     void createHighscoreModel();
     void addHighscore();
+
+    void playSound(QSound* sound);
 
     void retranslateUi();
 };

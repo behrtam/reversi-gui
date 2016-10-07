@@ -67,12 +67,13 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
     statusBar()->showMessage(tr("Status Bar"));
 }
 
+void MainWindow::playSound(QSound *sound) {
+    if (soundOption->isChecked()) {
+        sound->play();
+    }
+}
 
 void MainWindow::switchLanguage() {
-
-    if (langEN->isChecked())
-        qWarning("is checked");
-
     if (langEN->isChecked()) {
         qApp->removeTranslator(translator);
     } else {
@@ -230,9 +231,9 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
 
         game->make_move({x, game->board_size() - y - 1});
         if (game->is_active() == Piece::white)
-            tapped->play();
+            playSound(tapped);
         else
-            timber->play();
+            playSound(timber);
         ss << (game->is_active() == Piece::black ? "Blacks" : "Whites") << " turn.";
         statusBar()->showMessage(QString::fromStdString(ss.str()));
 
@@ -243,7 +244,7 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
 
         updateGameGrid();
     } else {
-        xylo->play();
+        playSound(xylo);
     }
     if  (game->possible_moves().size() == 0) {
         game_end = QDateTime::currentDateTime();
@@ -259,13 +260,13 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
 
                 if (score_white > score_black) {
                     msgBox.setText(playername_white_ + " won this round!");
-                    cheering->play();
+                    playSound(cheering);
                 } else if (score_white < score_black) {
                     msgBox.setText(playername_black_ + " won this round!");
                     if (blackHuman->isChecked()) {
-                        cheering->play();
+                        playSound(cheering);
                     } else {
-                        trombone->play();
+                        playSound(trombone);
                     }
                 } else {
                     msgBox.setText("It's a draw!");
@@ -417,7 +418,6 @@ void MainWindow::createActions() {
     blackPlayerGroup->addAction(blackRandom);
     blackHuman->setChecked(true);
 
-
     langEN = new QAction(tr("en"), this);
     langEN->setCheckable(true);
     langEN->setStatusTip(tr("Change language to EN"));
@@ -432,6 +432,10 @@ void MainWindow::createActions() {
     langGroup->addAction(langEN);
     langGroup->addAction(langDE);
     langEN->setChecked(true);
+
+    soundOption = new QAction(tr("Play sounds"), this);
+    soundOption->setCheckable(true);
+    soundOption->setChecked(true);
 
     startingPlayer = new QAction(tr("Black starts"), this);
     startingPlayer->setCheckable(true);
@@ -492,6 +496,7 @@ void MainWindow::createMenus() {
     langMenu->addAction(langDE);
 
     settingsMenu->addAction(startingPlayer);
+    settingsMenu->addAction(soundOption);
 
     highScoreMenu = menuBar()->addMenu(tr("&High score"));
     highScoreMenu->addAction(scoreDialogAct);
