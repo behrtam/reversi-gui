@@ -31,6 +31,7 @@
 #include "./highscore_columns.h"
 #include "./utils.h"
 #include "./highscore_dialog.h"
+#include "./playername_dialog.h"
 
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
@@ -68,7 +69,7 @@ MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
 }
 
 void MainWindow::playSound(QSound *sound) {
-    if (soundOption->isChecked()) {
+    if (soundAct->isChecked()) {
         sound->play();
     }
 }
@@ -161,7 +162,12 @@ void MainWindow::createSidebar() {
     restartButton->setGeometry(QRect(QPoint(50, 50), QSize(100, 50)));
     restartButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    connect(restartButton, &QPushButton::clicked, this, &MainWindow::undo);
+    //connect(restartButton, &QPushButton::clicked, this, &MainWindow::undo);
+
+    connect(restartButton, &QPushButton::clicked, [this]{
+        PlayerNameDialog dialog(this);
+        dialog.exec();
+    });
 
     /*connect(restartButton, &QPushButton::clicked, [this]{
         if (resetMsgBox->exec() == QMessageBox::Ok) {
@@ -439,9 +445,12 @@ void MainWindow::createActions() {
     langGroup->addAction(langDE);
     langEN->setChecked(true);
 
-    soundOption = new QAction(tr("Play sounds"), this);
-    soundOption->setCheckable(true);
-    soundOption->setChecked(true);
+    soundAct = new QAction(tr("Play sounds"), this);
+    soundAct->setCheckable(true);
+    soundAct->setChecked(true);
+
+    chanegNameAct = new QAction(tr("Change Names"), this);
+    connect(chanegNameAct, &QAction::triggered, this, &MainWindow::setPlayerNames);
 
     startingPlayer = new QAction(tr("Black starts"), this);
     startingPlayer->setCheckable(true);
@@ -502,7 +511,8 @@ void MainWindow::createMenus() {
     langMenu->addAction(langDE);
 
     settingsMenu->addAction(startingPlayer);
-    settingsMenu->addAction(soundOption);
+    settingsMenu->addAction(soundAct);
+    settingsMenu->addAction(chanegNameAct);
 
     highScoreMenu = menuBar()->addMenu(tr("&High score"));
     highScoreMenu->addAction(scoreDialogAct);
@@ -650,4 +660,31 @@ void MainWindow::addHighscore() {
     record.setValue(as_integer(Columns::whitename), playername_white_);
     record.setValue(as_integer(Columns::whitestones), score_white);
     model->insertRecord(-1, record);
+}
+
+void MainWindow::setPlayerNames() {
+    PlayerNameDialog dialog;
+    dialog.nameOneLineEdit->setText(playername_white_);
+    dialog.nameTwoLineEdit->setText(playername_black_);
+    dialog.exec();
+
+    if (!dialog.nameOneLineEdit->text().isEmpty())
+        playername_white_ = dialog.nameOneLineEdit->text();
+
+    if (!dialog.nameTwoLineEdit->text().isEmpty())
+        playername_black_ = dialog.nameTwoLineEdit->text();
+}
+
+bool MainWindow::event(QEvent *event) {
+    int returnValue = QWidget::event(event);
+
+    // QEvent::Show - Widget was shown on screen (QShowEvent).
+    // does not seem to work in the right order on mac os
+    if (!afterShownCalledFlag && event->type() == QEvent::Show) {
+        setPlayerNames();
+        afterShownCalledFlag = true;
+        return true;
+    }
+
+    return returnValue;
 }

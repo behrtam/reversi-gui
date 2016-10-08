@@ -76,7 +76,9 @@ class MainWindow : public QMainWindow {
     QAction *langEN;
     QAction *langDE;
 
-    QAction *soundOption;
+    QAction *soundAct;
+
+    QAction *chanegNameAct;
 
     QTranslator *translator;
     std::string undoState;
@@ -98,6 +100,8 @@ class MainWindow : public QMainWindow {
     QSound* cheering;
     QSound* trombone;
 
+    bool afterShownCalledFlag = false;
+
  public:
     explicit MainWindow(QWidget* parent = 0, Qt::WindowFlags flags = 0);
 
@@ -116,6 +120,7 @@ class MainWindow : public QMainWindow {
  protected:
     void closeEvent(QCloseEvent* event) Q_DECL_OVERRIDE;
     void changeEvent(QEvent *) override;
+    bool event(QEvent* event) override;
 
  private:
     void switchLanguage();
@@ -144,18 +149,18 @@ class MainWindow : public QMainWindow {
     void readSettings();
     void writeSettings();
 
-    void saveGame();
-    void loadGame();
     void clearSaveGame();
+    void loadGame();
+    void saveGame();
 
-    void saveState();
-    void clearState();
     void undo();
 
     void createHighscoreModel();
     void addHighscore();
 
     void playSound(QSound* sound);
+
+    void setPlayerNames();
 
     void retranslateUi();
 };

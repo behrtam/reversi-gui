@@ -25,7 +25,8 @@ set(SOURCE_FILES
         src/reversi_game.cpp
         src/clickablelabel.cpp
         src/random_reversi_player.cpp
-        src/highscore_dialog.cpp)
+        src/highscore_dialog.cpp
+        src/playername_dialog.cpp)
 
 set(HEADER_FILES
         src/direction.h
@@ -36,7 +37,8 @@ set(HEADER_FILES
         src/clickablelabel.h
         src/random_reversi_player.h
         src/interface_reversi_player.h
-        src/highscore_dialog.h)
+        src/highscore_dialog.h
+        src/playername_dialog.h)
 
 add_executable(reversi ${SOURCE_FILES} ${HEADER_FILES} ${RESOURCE_ADDED})
 
