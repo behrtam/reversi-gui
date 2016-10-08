@@ -215,3 +215,21 @@ TEST_F(ReversiGameTest, MovesCountInvalidMove) {
     game.make_move({0, 0});
     ASSERT_EQ(0, default_game.moves());
 }
+
+TEST_F(ReversiGameTest, StringConstructor) {
+    ReversiGame game("0210021002100000", Piece::white, 2);
+    ASSERT_EQ(4, game.board_size());
+    ASSERT_EQ(Piece::white, game.is_active());
+    // TODO: check real board settings
+}
+
+TEST_F(ReversiGameTest, BoardToString) {
+    ReversiGame game(4);
+    game.make_move({1, 0});
+    game.make_move({2, 0});
+
+    ReversiGame game_from_string(game.board2string(), game.is_active(), game.moves());
+
+    ASSERT_EQ(4, game.board_size());
+    ASSERT_EQ(game.board2string(), game_from_string.board2string());
+}
