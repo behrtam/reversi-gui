@@ -17,8 +17,10 @@
 #include <QWidgetItem>
 #include <QSqlRecord>
 #include <QSqlQuery>
-
+#include <QTimer>
 #include <QApplication>
+
+#include <QDebug>
 
 #include <memory>
 #include <sstream>
@@ -32,6 +34,7 @@
 #include "./utils.h"
 #include "./highscore_dialog.h"
 #include "./playername_dialog.h"
+#include "./reversi_player_thread.h"
 
 
 MainWindow::MainWindow(QWidget* parent, Qt::WindowFlags flags)
@@ -152,6 +155,39 @@ void MainWindow::loadImages() {
         qWarning("Failed to load black_light.png");
 }
 
+MainWindow::~MainWindow() {
+    if (black)
+        delete black;
+
+    /*
+    if  (thread)
+        delete thread;
+        */
+}
+
+void MainWindow::startComputer() {
+
+    if (thread && thread->isRunning()) {
+        qDebug("thinking cant start new");
+    } else {
+        black = new RandomReversiPlayer;
+        game->display_board();
+        thread  = new ReversiPlayerThread(std::unique_ptr<ReversiGame>(new ReversiGame(*game)), black);
+        connect(thread, &ReversiPlayerThread::finished, this, &MainWindow::setComputerMove);
+        qDebug("starting to think");
+        thread->start();
+    }
+}
+
+void MainWindow::setComputerMove(unsigned int x, unsigned int y) {
+    qDebug() << x << "|" << y;
+
+    clickedGamePiece(x, game->board_size() - y - 1);
+    undoState = "";  // no undo for computer moves
+    timber->play();
+    updateGameGrid();
+}
+
 void MainWindow::createSidebar() {
     sidebar = new QWidget(this);
     sidebar->setStyleSheet("background-color:gray;");
@@ -164,10 +200,34 @@ void MainWindow::createSidebar() {
 
     //connect(restartButton, &QPushButton::clicked, this, &MainWindow::undo);
 
+    connect(restartButton, &QPushButton::clicked, this, &MainWindow::startComputer);
+
+    /*
     connect(restartButton, &QPushButton::clicked, [this]{
-        PlayerNameDialog dialog(this);
-        dialog.exec();
+        qWarning("test");
+
+        black = new RandomReversiPlayer;
+        game->display_board();
+        thread  = new ReversiPlayerThread(std::unique_ptr<ReversiGame>(new ReversiGame(*game)), black);
+        connect(thread, &ReversiPlayerThread::finished, this, &MainWindow::setComputerMove);
+
+        qWarning("Start ...");
+        thread->start();
+        qWarning("... Stop.");
+
+        QDialog* d = new QDialog(0, Qt::CustomizeWindowHint|Qt::WindowTitleHint);
+        QLabel* l = new QLabel("Well let me think about that move...", d);
+        l->setGeometry(20, 20, 220, 30);
+        d->setWindowTitle("Thinking");
+
+        ReversiPlayerThread* thread = new ReversiPlayerThread(std::move(game), black);
+
+        connect(thread, &ReversiPlayerThread::finished, this, &MainWindow::setComputerMove);
+
+        QTimer::singleShot(1000, d, SLOT(close()));
+        d->exec();
     });
+*/
 
     /*connect(restartButton, &QPushButton::clicked, [this]{
         if (resetMsgBox->exec() == QMessageBox::Ok) {
@@ -231,9 +291,21 @@ void MainWindow::clearGameGrid() {
 }
 
 void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
-    if (game->is_valid_move({x, game->board_size() - y - 1})) {
-        std::stringstream ss((game->is_active() == Piece::black ? "Black" : "White"));
+    qDebug() << "clicked " << x << "|" << y;
+    qDebug() << "checked " << x << "|" << game->board_size() - y - 1;
+    //qDebug() << "checked " << x << "|" << game->board_size() - (game->board_size() - y - 1) - 1;
+
+
+    if (thread && thread->isRunning()) {
+        qDebug("can't play ... ai is thinking");
+        playSound(xylo);
+    } else if (game->is_valid_move({x, game->board_size() - y - 1})) {
+
+        std::stringstream ss;
+        ss << (game->is_active() == Piece::black ? playername_black_.toStdString() : playername_white_.toStdString());
         ss << " played on [" << x << "|" << y << "]. Now it's ";
+
+        qDebug() << QString::fromStdString(ss.str());
 
         if (game->moves() == 0)
             game_start = QDateTime::currentDateTime();
@@ -245,17 +317,17 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
             playSound(tapped);
         else
             playSound(timber);
-        ss << (game->is_active() == Piece::black ? "Blacks" : "Whites") << " turn.";
+        ss << (game->is_active() == Piece::black ? playername_black_.toStdString() : playername_white_.toStdString()) << " turn.";
         statusBar()->showMessage(QString::fromStdString(ss.str()));
 
-        if (black != nullptr && game->possible_moves().size() > 0) {
-            game->make_move(black->think(*game));
+        if (black != nullptr && game->is_active() == Piece::black && game->possible_moves().size() > 0) {
+            startComputer();
             undoState = "";  // no undo for computer moves
-            // timber->play();
         }
 
         updateGameGrid();
     } else {
+        qDebug("can't play ...");
         playSound(xylo);
     }
     if  (game->possible_moves().size() == 0) {
@@ -267,64 +339,64 @@ void MainWindow::clickedGamePiece(unsigned int x, unsigned int y) {
 
         addHighscore();
 
-                QMessageBox msgBox;
-                msgBox.setWindowTitle(tr("Game is over!"));
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(tr("Game is over!"));
 
-                if (score_white > score_black) {
-                    msgBox.setText(playername_white_ + " won this round!");
-                    playSound(cheering);
-                } else if (score_white < score_black) {
-                    msgBox.setText(playername_black_ + " won this round!");
-                    if (blackHuman->isChecked()) {
-                        playSound(cheering);
-                    } else {
-                        playSound(trombone);
-                    }
-                } else {
-                    msgBox.setText("It's a draw!");
-                }
-                msgBox.setInformativeText(QString("%1 has %2 pieces. %3 has %4 pieces. Restart or close?")
-                                                  .arg(playername_white_).arg(score_white)
-                                                  .arg(playername_black_).arg(score_black));
-                QPushButton *connectButton = msgBox.addButton(tr("Restart"), QMessageBox::ActionRole);
-                QPushButton *closeButton = msgBox.addButton(QMessageBox::Close);
-
-                msgBox.exec();
-
-                if (qobject_cast<QPushButton *>(msgBox.clickedButton()) == connectButton) {
-                    game = std::make_unique<ReversiGame>(game->board_size());
-                    resetGame();
-                } else if (qobject_cast<QPushButton *>(msgBox.clickedButton()) == closeButton) {
-                    this->close();
-                }
+        if (score_white > score_black) {
+            msgBox.setText(playername_white_ + " won this round!");
+            playSound(cheering);
+        } else if (score_white < score_black) {
+            msgBox.setText(playername_black_ + " won this round!");
+            if (blackHuman->isChecked()) {
+                playSound(cheering);
+            } else {
+                playSound(trombone);
             }
+        } else {
+            msgBox.setText("It's a draw!");
         }
+        msgBox.setInformativeText(QString("%1 has %2 pieces. %3 has %4 pieces. Restart or close?")
+                                          .arg(playername_white_).arg(score_white)
+                                          .arg(playername_black_).arg(score_black));
+        QPushButton *connectButton = msgBox.addButton(tr("Restart"), QMessageBox::ActionRole);
+        QPushButton *closeButton = msgBox.addButton(QMessageBox::Close);
 
-        void MainWindow::updateGameGrid() {
-            for (unsigned int x = 0; x < grid_layout->columnCount(); ++x) {
-                for (unsigned int y = 0; y < grid_layout->rowCount(); ++y) {
-                    QLayoutItem *item = grid_layout->itemAtPosition(y, x);
-                    auto label = dynamic_cast<ClickableLabel*>(item->widget());
+        msgBox.exec();
 
-                    Piece p = game->get_piece({x, game->board_size() - y - 1});
+        if (qobject_cast<QPushButton *>(msgBox.clickedButton()) == connectButton) {
+            game = std::make_unique<ReversiGame>(game->board_size());
+            resetGame();
+        } else if (qobject_cast<QPushButton *>(msgBox.clickedButton()) == closeButton) {
+            this->close();
+        }
+    }
+}
+
+void MainWindow::updateGameGrid() {
+    for (unsigned int x = 0; x < grid_layout->columnCount(); ++x) {
+        for (unsigned int y = 0; y < grid_layout->rowCount(); ++y) {
+            QLayoutItem *item = grid_layout->itemAtPosition(y, x);
+            auto label = dynamic_cast<ClickableLabel*>(item->widget());
+
+            Piece p = game->get_piece({x, game->board_size() - y - 1});
 
 
-                    if (p == Piece::black) {
-                        label->setPixmap(*pixmap_black);
-                    } else if (p == Piece::white) {
-                        label->setPixmap(*pixmap_white);
-                    } else {
-                        label->setPixmap(*pixmap_empty);
-                    }
-
-                    if (game->is_valid_move({x, game->board_size() - y - 1})) {
-                        if (game->is_active() == Piece::black)
-                            label->setPixmap(*pixmap_black_light);
-                        else
-                            label->setPixmap(*pixmap_white_light);
+            if (p == Piece::black) {
+                label->setPixmap(*pixmap_black);
+            } else if (p == Piece::white) {
+                label->setPixmap(*pixmap_white);
+            } else {
+                label->setPixmap(*pixmap_empty);
             }
 
-            label->setScaledContents(true);
+            if (game->is_valid_move({x, game->board_size() - y - 1})) {
+                if (game->is_active() == Piece::black)
+                    label->setPixmap(*pixmap_black_light);
+                else
+                    label->setPixmap(*pixmap_white_light);
+            }
+
+        label->setScaledContents(true);
         }
     }
 }

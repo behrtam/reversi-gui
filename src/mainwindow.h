@@ -23,6 +23,7 @@
 #include "./reversi_game.h"
 #include "./clickablelabel.h"
 #include "./interface_reversi_player.h"
+#include "./reversi_player_thread.h"
 
 
 class MainWindow : public QMainWindow {
@@ -94,6 +95,8 @@ class MainWindow : public QMainWindow {
     QDateTime game_start;
     QDateTime game_end;
 
+    ReversiPlayerThread* thread = 0;
+
     QSound* tapped;
     QSound* timber;
     QSound* xylo;
@@ -116,6 +119,8 @@ class MainWindow : public QMainWindow {
         if (playername.isNull() || playername.isEmpty()) return;
         playername_white_ = playername;
     }
+
+    ~MainWindow();
 
  protected:
     void closeEvent(QCloseEvent* event) Q_DECL_OVERRIDE;
@@ -163,6 +168,9 @@ class MainWindow : public QMainWindow {
     void setPlayerNames();
 
     void retranslateUi();
+
+    void startComputer();
+    void setComputerMove(unsigned int x, unsigned int y);
 };
 
 

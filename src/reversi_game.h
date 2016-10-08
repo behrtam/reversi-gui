@@ -77,6 +77,8 @@ class ReversiGame {
     ReversiGame(std::string board, Piece active_player, unsigned int moves);
 
 
+    ReversiGame(const ReversiGame& rg);
+
     /**
      * Displayes the board in the commandline mostly for debuging purposes.
      */

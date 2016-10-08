@@ -11,6 +11,14 @@
 #include "./utils.h"
 
 
+ReversiGame::ReversiGame(const ReversiGame &rg) :
+        board_(rg.board_),
+        possible_moves_(rg.possible_moves_),
+        size_(rg.size_),
+        moves_(rg.moves_),
+        active_(rg.active_) {}
+
+
 ReversiGame::ReversiGame(unsigned int size, Piece starting_player)
         : size_(size), board_(size * size), moves_(0) {
     if (size < 4 || size > 16 || size % 2 == 1)
